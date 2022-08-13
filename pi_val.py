@@ -16,8 +16,8 @@ length = 2000
 m = 32768
 c = 12345
 a = 1103515245
-seed1 = 10
-seed2 = 11
+seed1 = 20
+seed2 = 21
 
 
 xlist = LCG(m,c,a,seed1,length)
