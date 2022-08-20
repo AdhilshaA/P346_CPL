@@ -1,0 +1,30 @@
+<!-- start term in ap gp hp
+decimals in the hp sum
+series till what n?
+input file and output one for each question
+output file format
+myComplex class; calling add function after / before defining the new complex number
+matrix D.C meaning dot product -->
+
+In mycomplex class, should the functions be just functions or a class funcctions (called by/on the variables of the class)
+
+In qn3, to find B.C, it is not conventional matrix opration, more like, if two vectors are given as column matrix, a new operation has to defined to do the dot product.
+
+# Gauss- Jordon linear solve
+
+<!-- as function, should the output be column matrix - yes -->
+
+# Random walks
+
+<!-- different seeds for diffferent axes - np
+
+Can I attach the text output at the end of code as comments - Y
+and figures as files
+(if large data output is specified, those will be txt/dat file)
+
+can the seeds for diff walk be fixed beforehand or random - Fixed
+
+why exactly we added to the previous coordinates _to localize random walk from current point in a defined step range -->
+
+
+

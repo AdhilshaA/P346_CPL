@@ -1,7 +1,8 @@
 #program to calculate sum of first N odd numbers and N factorial
 
-n = 5
-
+#variables
+n1 = 5  #no. of terms of sumof term
+n2 = 3  #the n whose factorial is calculated
 
 def sum_odd(n):
     #returns sum of n odd numbers
@@ -17,5 +18,11 @@ def fact(n):
         factorial = factorial * i
     return factorial
 
-print('Sum of',n,'odd numbers is',sum_odd(n))
-print(n,'factorial is',fact(n))
+print('Sum of',n1,'odd numbers is',sum_odd(n1))
+print(n2,'factorial is',fact(n2))
+
+#  OUTPUT
+'''
+Sum of 5 odd numbers is 25
+3 factorial is 6
+'''
