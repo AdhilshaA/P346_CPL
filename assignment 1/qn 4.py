@@ -18,7 +18,9 @@ def mat_mult(A,B): #finding AB matrix
   #creating the sum matrix with zeroes
   sum = []
   for i in range(len(A)): #no. of row in sum is row of A
-    sum.append(list(0 for i in range( len(B[0]) ))) #no. of col in sum is col of B
+    sum.append(list()) 
+    for j in range(len(B[0])):
+      sum[i].append(0) #no. of col in sum is col of B, that many zeroes added
 
   #filling the sum matrix
   for row in range(len(sum)):

@@ -91,7 +91,7 @@ def printmat(A):
       
 def mat_dot(A,B):
     #returns the dot product of two column matrices
-    if len(A) != len(B) or len(A[0]) != 1 or len(B[0]) != 1:
+    if len(A) != len(B) or len(A[0]) != 1 or len(B[0]) != 1: #works only if column matrice sof same length
         return None
     dotprdct = 0
     for row in range(len(A)):
