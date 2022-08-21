@@ -19,6 +19,9 @@ print('The sum of the given series upto {} terms are {:.4f}'.format(n, total_sum
 plt.axhline(total_sum)
 plt.plot(stepwise_sum,'r-o')
 plt.yticks([i * 0.04 for i in range(15)])
+plt.title('Sum vs N plot')
+plt.xlabel('N')
+plt.ylabel('Sum')
 plt.show()
 
 #  OUTPUT
