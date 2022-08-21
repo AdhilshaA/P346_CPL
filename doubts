@@ -10,6 +10,11 @@ In mycomplex class, should the functions be just functions or a class funcctions
 
 In qn3, to find B.C, it is not conventional matrix opration, more like, if two vectors are given as column matrix, a new operation has to defined to do the dot product.
 
+is ipynb file uploaded in th egithub preferred over github py files
+(it has all outputs preprintd, but inputs cannot be read from another file)
+
+writing and reading formats of the input files we need
+
 # Gauss- Jordon linear solve
 
 <!-- as function, should the output be column matrix - yes -->
