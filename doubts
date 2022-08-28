@@ -15,6 +15,11 @@ Can i use an input from the py file by imprting it(thus running the initializati
 
 generalizing parsing
 
+is ipynb file uploaded in th egithub preferred over github py files
+(it has all outputs preprintd, but inputs cannot be read from another file)
+
+writing and reading formats of the input files we need
+
 # Gauss- Jordon linear solve
 
 <!-- as function, should the output be column matrix - yes -->
