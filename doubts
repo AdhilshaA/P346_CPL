@@ -6,9 +6,14 @@ output file format
 myComplex class; calling add function after / before defining the new complex number
 matrix D.C meaning dot product -->
 
-In mycomplex class, should the functions be just functions or a class funcctions (called by/on the variables of the class)
+<!-- In qn3, to find B.C, it is not conventional matrix opration, more like, if two vectors are given as column matrix, a new operation has to defined to do the dot product. -->
 
-In qn3, to find B.C, it is not conventional matrix opration, more like, if two vectors are given as column matrix, a new operation has to defined to do the dot product.
+<!-- shouldI put all my code in the library even while I am doing a specifiv cquestion -->
+
+<!-- FOr input files, can you show me some examples
+Can i use an input from the py file by imprting it(thus running the initializations) (Will add commentf for understanding what is what) -->
+
+generalizing parsing
 
 # Gauss- Jordon linear solve
 
@@ -25,6 +30,12 @@ and figures as files
 can the seeds for diff walk be fixed beforehand or random - Fixed
 
 why exactly we added to the previous coordinates _to localize random walk from current point in a defined step range -->
+
+# LU decomposition
+
+forward backward substitution cannot be same for the LU and cholesky decomposition, so separate code?
+
+
 
 
 

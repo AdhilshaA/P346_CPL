@@ -1,9 +1,10 @@
 #To find the sum of a certain series accurate upto 4 place in decimals an plot sum versus n (number of terms)
 
 import matplotlib.pyplot as plt
+import mylibrary as lib
 
-#variables
-n = 15
+#parsing the inputs using my own parsing function. Check mylibrary for more details
+locals().update(lib.parse('assignment 1 - warmup/qn3_input.txt'))  #getting those variables into this code
 
 # Given series had terms (second term onwards) of GP with starting term -1 and common ratio (-0.5)
 term = -1

@@ -252,4 +252,3 @@ def netdisplace_walk(walk):
     netdis = sqrt(((walk[-1][0] - walk[0][0]) ** 2) + ((walk[-1][1] - walk[0][1]) ** 2))
     #  eqn.          (last x    -   first x) ^ 2    +    (last y    -   first y) ^ 2
     return netdis
-

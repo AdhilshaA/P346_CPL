@@ -1,5 +1,50 @@
 # A library updated to all functions till the current assignment
 
+def parse(file_name):
+    # A function to parse data in a specific format. Read README file in the repository for more details
+    with open(file_name) as file:
+        lines = file.readlines()
+    inputs = {}
+    numlines = len(lines)
+    line_index = 0
+    while line_index < numlines:
+        line_index += 2
+        type_name = lines[line_index - 1].split()
+        if type_name[0] == 'int\n':
+            inputs[type_name[1]] = int(lines[line_index].split())
+            continue
+
+        elif type_name[0] == 'str\n':
+            inputs[type_name[1]] = lines[line_index]
+            continue
+
+        elif type_name[0] == 'int list\n':
+            inputs[type_name[1]] = list(map(int,lines[line_index]))
+            continue
+
+        elif type_name[0] == 'str list\n':
+            inputs[type_name[1]] = []
+            while lines[line_index][0] != '#':
+                inputs[type_name[1]].append(lines[line_index])
+                line_index += 1
+
+        elif type_name[0] == 'int mat\n':
+            inputs[type_name[1]] = []
+            while lines[line_index] != '#':
+                input[type_name[1]].append(list(map(int,lines[line_index].split())))
+                line_index += 1
+        
+        elif type_name[0] == 'str mat\n':
+            inputs[type_name[1]] = []
+            while lines[line_index] != '#':
+                input[type_name[1]].append(lines[line_index].split())
+                line_index += 1
+    
+        else:
+            return inputs
+        
+
+    
 def sum_odd(n):
     #returns sum of n odd numbers
     sum = 0
@@ -64,7 +109,7 @@ def mat_mult(A,B):
 
     return sum
 
-def printmat(A):
+def print_mat(A):
     #printing a given matrix A
     maxs = []
     for j in range(len(A[0])):  #finding maximum integer length in each column and saving to maxs list
