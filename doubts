@@ -15,11 +15,6 @@ Can i use an input from the py file by imprting it(thus running the initializati
 
 generalizing parsing
 
-is ipynb file uploaded in th egithub preferred over github py files
-(it has all outputs preprintd, but inputs cannot be read from another file)
-
-writing and reading formats of the input files we need
-
 # Gauss- Jordon linear solve
 
 <!-- as function, should the output be column matrix - yes -->
@@ -39,6 +34,36 @@ why exactly we added to the previous coordinates _to localize random walk from c
 # LU decomposition
 
 forward backward substitution cannot be same for the LU and cholesky decomposition, so separate code?
+
+where else was positive definite important
+
+Cholesky needs det!=0 =, use what for it
+
+LU condition only leading submatrix?
+said that if matrix itself is invertible, pivot and do it.
+
+<!-- LU determinant is (-1)^n times?? -->
+
+# iterative method
+
+
+
+# roots
+
+<!-- shifting a when shfting b . -->
+
+<!-- floating point precision -->
+
+# laguerre
+
+<!-- sign in denominator algo - discuss
+
+max iteration 25
+
+max x10 power -->
+
+
+
 
 
 

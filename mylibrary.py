@@ -1,7 +1,15 @@
 # A library updated to all functions till the current assignment
-from math import sqrt        
+from math import sqrt
 import matplotlib.pyplot as plt
-    
+global g_term   
+global g_a
+global g_c
+global g_m
+g_a = 1103515245
+g_c = 12345
+g_m = 32768
+g_term = 68461684 #some random number
+
 def sum_odd(n):
     #returns sum of n odd numbers
     sum = 0
@@ -100,6 +108,19 @@ def mat_dot(A,B):
         dotprdct += (A[row][0] * B[row][0])
     return dotprdct
 
+def check_symmetry(A):
+    #Function to check symmetry of A, return True or False
+    if len(A) != len(A[0]): #not square matix
+        return False
+
+    for i in range(len(A)):
+        for j in range(i + 1, len(A[0])): #checking only off-diagonal elements
+
+            if A[i][j] != A[j][i]: #symmetry condition False
+                return False
+    return True 
+
+
 class myComplex:
 
   def __init__(self, real, imag):
@@ -126,77 +147,96 @@ class myComplex:
     return val
 
 def parse(file_name):
-    # A function to parse data in a specific format. Read README file in the repository for more details. N.B. SELF WROTE CODE
-
-    file = open(file_name)
-    lines = file.readlines()
-    file.close()
+    # A function to parse data in a specific format. Read README file in the repository for more details
+    with open(file_name) as file:
+        lines = file.readlines()
     inputs = {}
     numlines = len(lines)
     line_index = 3
     while line_index < numlines:
         line_index += 2
         type_name = lines[line_index - 1].split()
-        if type_name[0] == 'int': #taking integer
+        if type_name[0] == 'int':
             inputs[type_name[1]] = int(lines[line_index].split()[0])
             line_index += 1
             continue
         
-        elif type_name[0] == 'float': #taking float
+        elif type_name[0] == 'float':
             inputs[type_name[1]] = float(lines[line_index].split()[0])
             line_index += 1
             continue
 
-        elif type_name[0] == 'str': #taking a single string
+        elif type_name[0] == 'str':
             inputs[type_name[1]] = lines[line_index][:-1]
             line_index += 1
             continue
         
-        elif type_name[0] == 'complex': #taking a complex value
+        elif type_name[0] == 'complex':
             real_imag = list(map(float,lines[line_index].split()))
             inputs[type_name[1]] = myComplex(real_imag[0], real_imag[1])
             line_index += 1
             continue
 
-        elif type_name[0] == 'int_list': #taking an integer list
+        elif type_name[0] == 'int_list':
             inputs[type_name[1]] = list(map(int,lines[line_index].split()))
             line_index += 1
             continue
 
-        elif type_name[0] == 'float_list': #taking a list of float type
+        elif type_name[0] == 'float_list':
             inputs[type_name[1]] = list(map(float,lines[line_index].split()))
             line_index += 1
             continue
 
-        elif type_name[0] == 'str_list': #taking a list of string or a paragraph
+        elif type_name[0] == 'str_list':
             inputs[type_name[1]] = []
             while lines[line_index][0] != '#':
                 inputs[type_name[1]].append(lines[line_index][:-1])
                 line_index += 1
 
-        elif type_name[0] == 'int_mat': #taking integer matrix
+        elif type_name[0] == 'int_mat':
             inputs[type_name[1]] = []
             while lines[line_index][0] != '#':
                 inputs[type_name[1]].append(list(map(int,lines[line_index].split())))
                 line_index += 1
         
-        elif type_name[0] == 'float_mat': #taking matrix in float type
+        elif type_name[0] == 'float_mat':
             inputs[type_name[1]] = []
             while lines[line_index][0] != '#':
                 inputs[type_name[1]].append(list(map(float,lines[line_index].split())))
                 line_index += 1
 
-        elif type_name[0] == 'str_mat': #taking string in matrix
+        elif type_name[0] == 'str_mat':
             inputs[type_name[1]] = []
             while lines[line_index][0] != '#':
                 inputs[type_name[1]].append(lines[line_index].split())
                 line_index += 1
     
-        elif type_name[0] == 'EOF': #when encountered EOF (i.e.if nothing above)
+        else:
             return inputs
-        else: 
-            print('Input file data format invalid!')
-            return None
+
+class randgen():
+    def __init__(self,seed, a = 1103515245, c = 12345 ,m = 32768):
+        self.term = seed
+        self.a = a
+        self.c = c
+        self.m = m
+    def gen(self):
+        self.term = (((self.a * self.term) + self.c) % self.m)
+        return self.term / self.m
+
+
+def LCGstart(seed, a = 1103515245, c = 12345 ,m = 32768):
+    # function for LCG that generates random numbers in range (0,1)
+    #default a, c, m value set. can change in case specified.
+    g_a = a
+    g_c = c
+    g_m = m
+    g_term = seed
+
+def nextrand():
+
+    g_term = (((g_a * g_term) + g_c) % g_m)
+    return g_term / g_m
 
 def LCG(seed, length, a = 1103515245, c = 12345 ,m = 32768):
     # function for LCG that generates random numbers in range (0,1)
@@ -252,3 +292,285 @@ def netdisplace_walk(walk):
     netdis = sqrt(((walk[-1][0] - walk[0][0]) ** 2) + ((walk[-1][1] - walk[0][1]) ** 2))
     #  eqn.          (last x    -   first x) ^ 2    +    (last y    -   first y) ^ 2
     return netdis
+
+def inv_mat_GJ(A):
+
+    if len(A) != len(A[0]): #if not square matrix, exit
+        return None
+
+    n = len(A) #the dimension of matrix will be n*n
+    I = []
+    for row in range(n):
+        I.append(list())
+        for col in range(n):
+            if col == row:
+                I[row].append(1)
+            else:
+                I[row].append(0)
+    
+    
+    for curr in range(n): #curr takes the index of each column we are processing
+        #row swap if zero
+        if A[curr][curr] == 0:
+            max_row = curr
+            for row in range(curr + 1,n):
+
+                if abs(A[row][curr]) > abs(A[max_row][curr]):
+                    max_row = row
+            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
+                return None
+            A[curr],A[max_row] = A[max_row], A[curr]
+            I[curr],I[max_row] = I[max_row], I[curr]
+        #making the pivot element 1
+        if A[curr][curr] != 1:
+            pivot = A[curr][curr]
+            for i in range(n):
+                A[curr][i] = A[curr][i] / pivot
+                I[curr][i] = I[curr][i] / pivot
+
+        #making others zero
+        for i in range(0,n):
+            if i == curr: #skipping the pivot point
+                continue
+            if A[i][curr] != 0:
+                lead = A[i][curr]
+                for j in range(0,n):
+                    A[i][j] = A[i][j] - (A[curr][j] * lead)
+                    I[i][j] = I[i][j] - (I[curr][j] * lead)
+
+    return I
+
+def solve_GJ(A,B):
+    #solves linear equations using Gauss-Jordon method
+    #takes the A and B matrix as input from the form A.X = B where X is the unknown matrix
+    #returns solved X 
+
+    #constructing augmented matrix 
+    augmat = A
+    for row in range(len(augmat)):
+        augmat[row].append(B[row])
+    
+    for curr in range(len(augmat)): #curr takes the index of each column we are processing
+        #row swap if zero
+        if augmat[curr][curr] == 0:
+            max_row = curr
+            for row in range(curr + 1,len(augmat)):
+
+                if abs(augmat[row][curr]) > abs(augmat[max_row][curr]):
+                    max_row = row
+            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
+                return None
+            augmat[curr],augmat[max_row] = augmat[max_row], augmat[curr]
+
+        #making the pivot element 1
+        if augmat[curr][curr] != 1:
+            pivot_term = augmat[curr][curr]
+            for i in range(len(augmat[curr])):
+                augmat[curr][i] = augmat[curr][i] / pivot_term
+
+        #making others zero
+        for i in range(0,len(augmat)):
+            if i == curr: #skipping the pivot point
+                continue
+            if augmat[i][curr] != 0:
+                lead_term = augmat[i][curr]
+                for j in range(curr,len(augmat[i])): #elements before the curr column are zero in curr row, so no need to calculate
+                    augmat[i][j] = augmat[i][j] - (augmat[curr][j] * lead_term)
+        print_mat(augmat)
+    solution = []
+    for i in range(len(augmat)):
+        solution.append([augmat[i][-1]]) #Taking last elements into a list to form column matrix
+    return solution
+
+def mat_det(A):
+    n = len(A)
+    if n != len(A[0]):
+        print('Not a square matrix')
+        return None
+    for curr in range(n): #curr takes the index of each column we are processing
+        #row swap if zero
+        if A[curr][curr] == 0:
+            max_row = curr
+            for row in range(curr + 1,n):
+
+                if abs(A[row][curr]) > abs(A[max_row][curr]):
+                    max_row = row
+            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
+                print('The matrix is singular!')
+                return None
+            A[curr],A[max_row] = A[max_row], A[curr]
+
+        #making others zero
+        for i in range(curr + 1,n):
+            if A[i][curr] != 0:
+                lead_term = A[i][curr]/A[curr][curr]
+                for j in range(curr,len(A[i])): #elements before the curr column are zero in curr row, so no need to calculate
+                    A[i][j] = A[i][j] - (A[curr][j] * lead_term)
+    prdct = 1
+    for i in range(n):
+        prdct *= A[i][i]
+    return prdct
+    
+def Chol_dec(A):
+    #function that performs the Cholesky decomposition on A and returns L (Lower filled) when A = (L)(Ltranspose)
+
+    #if detA is 0 then dont , add feauture later
+
+    #IF NOT SYMMETRIC, EXIT.
+    if check_symmetry(A) == False:
+        print('Non symmetric!')
+        return None
+
+    n = len(A)
+
+    for row in range(n):
+        for col in range(row,n):
+            
+            if row == col:
+                sum = 0
+                for i in range(row):
+                    sum += (A[row][i] ** 2)
+                A[row][row] = sqrt(A[row][row] - sum)
+            else:
+                sum = 0
+                for i in range(row):
+                    sum += (A[row][i] * A[i][col])
+                A[row][col] = (A[row][col] - sum) / A[row][row]
+                A[col][row] = A[row][col]
+        
+    return A
+
+def forward_backward_LU(A,B):
+    Y = []
+    n = len(B)
+    for i in range(n):
+        sum = 0
+        for j in range(i):
+            sum += (A[i][j] * Y[j])
+        Y.append(B[i][0]-sum)
+    X = Y[:]
+    for i in range(n-1,-1,-1):
+        sum = 0
+        for j in range(i + 1, n):
+            sum += (A[i][j] * X[j])
+        X[i] = (Y[i] - sum) / A[i][i]
+
+    print(X)
+
+def forward_backward_cholesky(A,B):
+    Y = []
+    n = len(B)
+    for i in range(n):
+        sum = 0
+        for j in range(i):
+            sum += (A[i][j] * Y[j])
+        Y.append((B[i][0]-sum)/A[i][i])
+
+    X = Y
+    for i in range(n-1,-1,-1):
+        sum = 0
+        for j in range(i + 1, n):
+            sum += (A[i][j] * X[j])
+        X[i] = (Y[i] - sum) / A[i][i]
+
+    for i in range(n):
+        X[i] = [X[i]]
+
+    return Y
+
+def Cholesky_solve(A,B): 
+    #solves AX = B using cholesky Decomposition
+
+    A = Chol_dec(A)
+    if A is None:
+        print('Cholesky Solve not possible!')
+        return None
+
+    # Finding Y from (L)(Y) = B by forwarwd substitution
+
+    # Finding X from (Lt)(X) = (Y) by backward substitution
+    
+    return forward_backward_cholesky(A,B)
+
+def LU_dec(A):
+    n = len(A)
+    if n != len(A[0]):
+        print('Not square!')
+        return None
+    for j in range(n):
+        for i in range(1,n):
+            if i <= j:
+                sum = 0
+                for k in range(0,i):
+                    sum += (A[i][k] * A[k][j])
+                A[i][j] = A[i][j] - sum
+            else:
+                sum = 0
+                for k in range(0,j):
+                    sum += (A[i][k] * A[k][j])
+                A[i][j] = (A[i][j] - sum) / A[j][j]
+
+    return A
+
+def forward_backward_LU(A,B):
+    if A is None:
+        print('LU decomposition failed!')
+        return None
+    Y = []
+    n = len(B)
+    for i in range(n):
+        sum = 0
+        for j in range(i):
+            sum += (A[i][j] * Y[j])
+        Y.append(B[i][0]-sum)
+    X = Y[:]
+    for i in range(n-1,-1,-1):
+        sum = 0
+        for j in range(i + 1, n):
+            sum += (A[i][j] * X[j])
+        X[i] = (Y[i] - sum) / A[i][i]
+    for i in range(n):
+        X[i] = [X[i]]
+
+    return X
+
+def LU_solve(A,B):
+    return forward_backward_LU(LU_dec(A),B)
+
+def mat_eigenvalues(A):
+
+    n = len(A)
+    if n != len(A[0]):
+        print('Not a square matrix')
+        return None
+    for curr in range(n): #curr takes the index of each column we are processing
+        #row swap if zero
+        if A[curr][curr] == 0:
+            max_row = curr
+            for row in range(curr + 1,n):
+
+                if abs(A[row][curr]) > abs(A[max_row][curr]):
+                    max_row = row
+            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
+                print('The matrix is singular!')
+                return None
+            A[curr],A[max_row] = A[max_row], A[curr]
+
+        #making others zero
+        for i in range(n):
+            if i == j:
+                continue
+            if A[i][curr] != 0:
+                lead_term = A[i][curr]/A[curr][curr]
+                for j in range(curr,len(A[i])): #elements before the curr column are zero in curr row, so no need to calculate
+                    A[i][j] = A[i][j] - (A[curr][j] * lead_term)
+    
+    return [A[i][i] for i in range(n)]
+
+def check_pos_definite(A):
+    if check_symmetry(A) == False:
+        print('A not symmetric!')
+        return False
+    z = list([1] for i in range(len(A)))
+
+    return True

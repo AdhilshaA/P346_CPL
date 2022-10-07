@@ -1,7 +1,7 @@
 # Writing LCG
 
 
-
+#  write function to generate 1 random number at a time.
 def LCG(seed, length, a = 1103515245, c = 12345 ,m = 32768):
     # function for LCG that generates random numbers in range (0,1)
     #default a, c, m value set. can change in case specified

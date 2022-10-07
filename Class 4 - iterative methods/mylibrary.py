@@ -384,8 +384,6 @@ def Chol_dec(A):
 
     #if detA is 0 then dont , add feauture later
 
-    #if not hermitian exit
-
     #IF NOT SYMMETRIC, EXIT.
     if check_symmetry(A) == False:
         print('Non symmetric!')
@@ -513,35 +511,13 @@ def mat_eigenvalues(A):
     if n != len(A[0]):
         print('Not a square matrix')
         return None
-    for curr in range(n): #curr takes the index of each column we are processing
-        #row swap if zero
-        if A[curr][curr] == 0:
-            max_row = curr
-            for row in range(curr + 1,n):
 
-                if abs(A[row][curr]) > abs(A[max_row][curr]):
-                    max_row = row
-            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
-                print('The matrix is singular!')
-                return None
-            A[curr],A[max_row] = A[max_row], A[curr]
-
-        #making others zero
-        for i in range(1,n):
-            if i == j:
-                continue
-            if A[i][curr] != 0:
-                lead_term = A[i][curr]/A[curr][curr]
-                for j in range(curr,len(A[i])): #elements before the curr column are zero in curr row, so no need to calculate
-                    A[i][j] = A[i][j] - (A[curr][j] * lead_term)
-    
-    L = [A[i][i] for i in range(n)]
-    return L
+    return
 
 def check_pos_definite(A):
     if check_symmetry(A) == False:
         print('A not symmetric!')
         return False
-    z = list([1] for i in range(len(A)))
 
+    #use eigenvalues > 0
     return True

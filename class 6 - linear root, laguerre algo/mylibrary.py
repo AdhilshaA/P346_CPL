@@ -1,5 +1,6 @@
 # A library updated to all functions till the current assignment
-from math import sqrt        
+from math import sqrt
+from re import A        
 import matplotlib.pyplot as plt
     
 def sum_odd(n):
@@ -384,8 +385,6 @@ def Chol_dec(A):
 
     #if detA is 0 then dont , add feauture later
 
-    #if not hermitian exit
-
     #IF NOT SYMMETRIC, EXIT.
     if check_symmetry(A) == False:
         print('Non symmetric!')
@@ -513,35 +512,83 @@ def mat_eigenvalues(A):
     if n != len(A[0]):
         print('Not a square matrix')
         return None
-    for curr in range(n): #curr takes the index of each column we are processing
-        #row swap if zero
-        if A[curr][curr] == 0:
-            max_row = curr
-            for row in range(curr + 1,n):
 
-                if abs(A[row][curr]) > abs(A[max_row][curr]):
-                    max_row = row
-            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
-                print('The matrix is singular!')
-                return None
-            A[curr],A[max_row] = A[max_row], A[curr]
-
-        #making others zero
-        for i in range(1,n):
-            if i == j:
-                continue
-            if A[i][curr] != 0:
-                lead_term = A[i][curr]/A[curr][curr]
-                for j in range(curr,len(A[i])): #elements before the curr column are zero in curr row, so no need to calculate
-                    A[i][j] = A[i][j] - (A[curr][j] * lead_term)
-    
-    L = [A[i][i] for i in range(n)]
-    return L
+    return
 
 def check_pos_definite(A):
     if check_symmetry(A) == False:
         print('A not symmetric!')
         return False
-    z = list([1] for i in range(len(A)))
 
+    #use eigenvalues > 0
     return True
+
+def root_bracketing(f,a,b):
+    for i in range(12):
+
+        if f(a) * f(b) < 0:
+            return a,b
+        if abs(f(a)) < abs(f(b)):
+            temp = a
+            a = a - (1.5*(b-a))
+            b = temp
+        else:
+            temp = b
+            b = b + (1.5*(b-a))
+            a = b
+    if abs(f(a)) < abs(f(b)):
+        return root_bracketing(a - (1.5*(b-a)),b)
+    else:
+        return root_bracketing(a,b + 1.5*(abs(b-a)))
+
+def root_bisection(f,a,b,epsilon,delta):
+    a,b = root_bracketing(f,a,b)
+    steps = 1
+    while steps<100:
+        # print('difference is {} giving {} and {}'.format(abs(a-b),f(a),f(b)))
+        if (a-b) < epsilon:
+            if abs(f(a)) < delta or abs(f(b)) < delta:
+                return a,b,steps
+        c = (a + b) / 2
+        if f(a) * f(c) < 0:
+            b = c
+        else:
+            a = c
+        steps += 1
+    print('Not converging after 100 steps, terminated')
+    return None
+
+def root_newtonraphson(f,df,x0,epsilon,delta):
+    steps = 0
+    while steps < 100:
+        x1 = x0 - (f(x0)/df(x0))
+        if abs(x1 - x0) < epsilon and f(x1) < delta:
+            return x1,steps
+        x0 = x1
+        steps += 1
+    print('Not converging after 100 steps, terminated')
+    return None
+
+def root_regulafalsi(f,a,b,epsilon,delta):
+    a,b = root_bracketing(f,a,b)
+
+    c = b - (((b-a)*f(b))/(f(b) - f(a)))
+    if f(c)*f(a) < 0:
+        b = c
+    else:
+        a = c
+
+    steps = 2
+    while steps < 100:
+        oldc = c
+        c = b - (((b-a)*f(b))/(f(b) - f(a)))
+        if f(c)*f(a) < 0:
+            b = c
+        else:
+            a = c
+        if abs(c-oldc) < epsilon and f(c) < delta:
+            return c,steps
+        oldc = c
+        steps += 1
+    print('Not converging after 100 steps, terminated')
+    return None

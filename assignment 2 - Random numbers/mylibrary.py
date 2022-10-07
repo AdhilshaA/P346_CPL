@@ -198,6 +198,19 @@ def parse(file_name):
             print('Input file data format invalid!')
             return None
 
+class randgen():
+    def __init__(self,seed, a = 1103515245, c = 12345 ,m = 32768):
+        self.term = seed
+        self.a = a
+        self.c = c
+        self.m = m
+    def __repr__(self):
+        self.term = (((self.a * self.term) + self.c) % self.m)
+        return self.term
+    def __str__(self):
+        self.term = (((self.a * self.term) + self.c) % self.m)
+        return self.term
+
 def LCG(seed, length, a = 1103515245, c = 12345 ,m = 32768):
     # function for LCG that generates random numbers in range (0,1)
     #default a, c, m value set. can change in case specified.

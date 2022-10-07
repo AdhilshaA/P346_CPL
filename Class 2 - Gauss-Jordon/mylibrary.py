@@ -1,49 +1,6 @@
 # A library updated to all functions till the current assignment
-
-def parse(file_name):
-    # A function to parse data in a specific format. Read README file in the repository for more details
-    with open(file_name) as file:
-        lines = file.readlines()
-    inputs = {}
-    numlines = len(lines)
-    line_index = 0
-    while line_index < numlines:
-        line_index += 2
-        type_name = lines[line_index - 1].split()
-        if type_name[0] == 'int\n':
-            inputs[type_name[1]] = int(lines[line_index].split())
-            continue
-
-        elif type_name[0] == 'str\n':
-            inputs[type_name[1]] = lines[line_index]
-            continue
-
-        elif type_name[0] == 'int list\n':
-            inputs[type_name[1]] = list(map(int,lines[line_index]))
-            continue
-
-        elif type_name[0] == 'str list\n':
-            inputs[type_name[1]] = []
-            while lines[line_index][0] != '#':
-                inputs[type_name[1]].append(lines[line_index])
-                line_index += 1
-
-        elif type_name[0] == 'int mat\n':
-            inputs[type_name[1]] = []
-            while lines[line_index] != '#':
-                input[type_name[1]].append(list(map(int,lines[line_index].split())))
-                line_index += 1
-        
-        elif type_name[0] == 'str mat\n':
-            inputs[type_name[1]] = []
-            while lines[line_index] != '#':
-                input[type_name[1]].append(lines[line_index].split())
-                line_index += 1
-    
-        else:
-            return inputs
-        
-
+from math import sqrt        
+import matplotlib.pyplot as plt
     
 def sum_odd(n):
     #returns sum of n odd numbers
@@ -143,3 +100,273 @@ def mat_dot(A,B):
         dotprdct += (A[row][0] * B[row][0])
     return dotprdct
 
+class myComplex:
+
+  def __init__(self, real, imag):
+    self.real = real
+    self.imag = imag
+
+  def __str__(self): #for printing complex no. in (a + bi) format when called print on any class instance
+    return '{} + ({})i'.format(self.real, self.imag)
+
+  def __add__(self,z2): # Method to add it with z2 of same class by using + between the instances
+    add_real = self.real + z2.real
+    add_imag = self.imag + z2.imag
+    z3 = myComplex(add_real, add_imag)
+    return z3
+  
+  def __mul__(self,z2): # Method to multiply it with z2 of same class using * between instances
+    mult_real = (self.real * z2.real) - (self.imag * z2.imag)
+    mult_imag = (self.real * z2.imag) + (self.imag * z2.real)
+    z3 = myComplex(mult_real, mult_imag)
+    return z3
+  
+  def __abs__(self):  #method to find modulus by using abs() on the instance
+    val = sqrt((self.real ** 2) + (self.imag ** 2))
+    return val
+
+def parse(file_name):
+    # A function to parse data in a specific format. Read README file in the repository for more details. N.B. SELF WROTE CODE
+
+    file = open(file_name)
+    lines = file.readlines()
+    file.close()
+    inputs = {}
+    numlines = len(lines)
+    line_index = 3
+    while line_index < numlines:
+        line_index += 2
+        type_name = lines[line_index - 1].split()
+        if type_name[0] == 'int': #taking integer
+            inputs[type_name[1]] = int(lines[line_index].split()[0])
+            line_index += 1
+            continue
+        
+        elif type_name[0] == 'float': #taking float
+            inputs[type_name[1]] = float(lines[line_index].split()[0])
+            line_index += 1
+            continue
+
+        elif type_name[0] == 'str': #taking a single string
+            inputs[type_name[1]] = lines[line_index][:-1]
+            line_index += 1
+            continue
+        
+        elif type_name[0] == 'complex': #taking a complex value
+            real_imag = list(map(float,lines[line_index].split()))
+            inputs[type_name[1]] = myComplex(real_imag[0], real_imag[1])
+            line_index += 1
+            continue
+
+        elif type_name[0] == 'int_list': #taking an integer list
+            inputs[type_name[1]] = list(map(int,lines[line_index].split()))
+            line_index += 1
+            continue
+
+        elif type_name[0] == 'float_list': #taking a list of float type
+            inputs[type_name[1]] = list(map(float,lines[line_index].split()))
+            line_index += 1
+            continue
+
+        elif type_name[0] == 'str_list': #taking a list of string or a paragraph
+            inputs[type_name[1]] = []
+            while lines[line_index][0] != '#':
+                inputs[type_name[1]].append(lines[line_index][:-1])
+                line_index += 1
+
+        elif type_name[0] == 'int_mat': #taking integer matrix
+            inputs[type_name[1]] = []
+            while lines[line_index][0] != '#':
+                inputs[type_name[1]].append(list(map(int,lines[line_index].split())))
+                line_index += 1
+        
+        elif type_name[0] == 'float_mat': #taking matrix in float type
+            inputs[type_name[1]] = []
+            while lines[line_index][0] != '#':
+                inputs[type_name[1]].append(list(map(float,lines[line_index].split())))
+                line_index += 1
+
+        elif type_name[0] == 'str_mat': #taking string in matrix
+            inputs[type_name[1]] = []
+            while lines[line_index][0] != '#':
+                inputs[type_name[1]].append(lines[line_index].split())
+                line_index += 1
+    
+        elif type_name[0] == 'EOF': #when encountered EOF (i.e.if nothing above)
+            return inputs
+        else: 
+            print('Input file data format invalid!')
+            return None
+
+def LCG(seed, length, a = 1103515245, c = 12345 ,m = 32768):
+    # function for LCG that generates random numbers in range (0,1)
+    #default a, c, m value set. can change in case specified.
+
+    term = seed
+    RNs = []
+
+    for i in range(0,length):
+        term = (((a * term) + c) % m) #applying eqn.
+        RNs.append((term / m)) #scaling to the range(1)
+    return RNs
+
+def Randomwalk2D_sim(seed,steps,start = (0,0)):
+    #simulates Random walk, return list of coordinates and prints a Random walk plot.
+
+    Random_numbers = LCG(seed,steps * 2) #need two coordinates
+    points = [start] #list of coordinates visited, stored as tuples
+    for i in range(steps):
+        x = points[i][0] + (2 * Random_numbers[i]) - 1
+        y = points[i][1] + (2 * Random_numbers[(steps + i)]) - 1
+        points.append((x,y))
+    
+    #graph formatting
+    plt.title('Random walk with {} steps'.format(steps))
+    plt.axhline(0,lw = 1,c = 'k')
+    plt.axvline(0,lw = 1,c = 'k') 
+    plt.xlabel('X axis')
+    plt.ylabel('Y axis')
+    plt.plot([start[0]],[start[1]],'go',ms = 4) #plotting thte start point as green
+    plt.plot([points[i][0] for i in range(steps+1)],[points[i][1] for i in range(steps+1)],'-bo',lw = '1',ms = 1, mec = 'k', mfc = 'b' )
+    #points[i][0] is the (i)th x cordinate and points[i][1] is the (i)th y cordinate, then a list of each
+    plt.plot([points[-1][0]],[points[-1][1]],'ro',ms = 3) #plotting the end point as red
+    plt.show()
+    return points
+
+
+def rms_walk(walk):
+    #calculating rms distance from a 2D walk
+
+    steps = len(walk) - 1  #n steps = n + 1 coordinates
+    sumof_dsquared = 0
+    for i in range(1,steps):
+        sumof_dsquared += (((walk[i][0] - walk[i-1][0]) ** 2) + ((walk[i][1] - walk[i-1][1]) ** 2))
+        # eqn.                  (  x2   -   x1  ) ^ 2         +      (  y2   -   y1  ) ^ 2 
+    rms = sqrt(sumof_dsquared / steps)
+    return rms
+
+
+def netdisplace_walk(walk):
+    #caluculate the net displacement of walk
+
+    netdis = sqrt(((walk[-1][0] - walk[0][0]) ** 2) + ((walk[-1][1] - walk[0][1]) ** 2))
+    #  eqn.          (last x    -   first x) ^ 2    +    (last y    -   first y) ^ 2
+    return netdis
+
+def inv_mat_GJ(A):
+
+    if len(A) != len(A[0]): #if not square matrix, exit
+        return None
+
+    n = len(A) #the dimension of matrix will be n*n
+    I = []
+    for row in range(n):
+        I.append(list())
+        for col in range(n):
+            if col == row:
+                I[row].append(1)
+            else:
+                I[row].append(0)
+    
+    
+    for curr in range(n): #curr takes the index of each column we are processing
+        #row swap if zero
+        if A[curr][curr] == 0:
+            max_row = curr
+            for row in range(curr + 1,n):
+
+                if abs(A[row][curr]) > abs(A[max_row][curr]):
+                    max_row = row
+            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
+                return None
+            A[curr],A[max_row] = A[max_row], A[curr]
+            I[curr],I[max_row] = I[max_row], I[curr]
+        #making the pivot element 1
+        if A[curr][curr] != 1:
+            pivot = A[curr][curr]
+            for i in range(n):
+                A[curr][i] = A[curr][i] / pivot
+                I[curr][i] = I[curr][i] / pivot
+
+        #making others zero
+        for i in range(0,n):
+            if i == curr: #skipping the pivot point
+                continue
+            if A[i][curr] != 0:
+                lead = A[i][curr]
+                for j in range(0,n):
+                    A[i][j] = A[i][j] - (A[curr][j] * lead)
+                    I[i][j] = I[i][j] - (I[curr][j] * lead)
+
+    return I
+
+def solve_GJ(A,B):
+    #solves linear equations using Gauss-Jordon method
+    #takes the A and B matrix as input from the form A.X = B where X is the unknown matrix
+    #returns solved X 
+
+    #constructing augmented matrix 
+    augmat = A
+    for row in range(len(augmat)):
+        augmat[row].append(B[row])
+    
+    for curr in range(len(augmat)): #curr takes the index of each column we are processing
+        #row swap if zero
+        if augmat[curr][curr] == 0:
+            max_row = curr
+            for row in range(curr + 1,len(augmat)):
+
+                if abs(augmat[row][curr]) > abs(augmat[max_row][curr]):
+                    max_row = row
+            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
+                return None
+            augmat[curr],augmat[max_row] = augmat[max_row], augmat[curr]
+
+        #making the pivot element 1
+        if augmat[curr][curr] != 1:
+            pivot_term = augmat[curr][curr]
+            for i in range(len(augmat[curr])):
+                augmat[curr][i] = augmat[curr][i] / pivot_term
+
+        #making others zero
+        for i in range(0,len(augmat)):
+            if i == curr: #skipping the pivot point
+                continue
+            if augmat[i][curr] != 0:
+                lead_term = augmat[i][curr]
+                for j in range(curr,len(augmat[i])): #elements before the curr column are zero in curr row, so no need to calculate
+                    augmat[i][j] = augmat[i][j] - (augmat[curr][j] * lead_term)
+        print_mat(augmat)
+    solution = []
+    for i in range(len(augmat)):
+        solution.append([augmat[i][-1]]) #Taking last elements into a list to form column matrix
+    return solution
+
+def mat_det(A):
+    n = len(A)
+    if n != len(A[0]):
+        print('Not a square matrix')
+        return None
+    for curr in range(n): #curr takes the index of each column we are processing
+        #row swap if zero
+        if A[curr][curr] == 0:
+            max_row = curr
+            for row in range(curr + 1,n):
+
+                if abs(A[row][curr]) > abs(A[max_row][curr]):
+                    max_row = row
+            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
+                print('The matrix is singular!')
+                return None
+            A[curr],A[max_row] = A[max_row], A[curr]
+
+        #making others zero
+        for i in range(curr + 1,n):
+            if A[i][curr] != 0:
+                lead_term = A[i][curr]/A[curr][curr]
+                for j in range(curr,len(A[i])): #elements before the curr column are zero in curr row, so no need to calculate
+                    A[i][j] = A[i][j] - (A[curr][j] * lead_term)
+    prdct = 1
+    for i in range(n):
+        prdct *= A[i][i]
+    return prdct

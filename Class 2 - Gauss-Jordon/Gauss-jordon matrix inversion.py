@@ -2,7 +2,7 @@ import mylibrary as lib
 
 #TO invert a mattrix
 
-def inv_mat(A):
+def inv_mat_GJ(A):
 
     if len(A) != len(A[0]): #if not square matrix, exit
         return None
@@ -50,6 +50,6 @@ def inv_mat(A):
     return I
 
 A = [[2,-3,1.4],[2.5,1,-2],[-0.8,0,3.1]]
-A_inv = inv_mat(A)
+A_inv = inv_mat_GJ(A)
 lib.print_mat(A_inv)
 
