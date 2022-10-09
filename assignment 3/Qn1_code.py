@@ -11,6 +11,7 @@ locals().update(lib.parse('assignment 3/qn1_input.txt'))  #getting those variabl
 # matAcopy : copy of matrix A for extended use
 
 
+
 print('These equations are taken in the form matA.X = matB where X will be the solution matrix and A is:')
 lib.print_mat(matA)
 print('and B is')

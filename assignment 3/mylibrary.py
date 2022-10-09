@@ -312,6 +312,25 @@ def netdisplace_walk(walk):
     #  eqn.          (last x    -   first x) ^ 2    +    (last y    -   first y) ^ 2
     return netdis
 
+def solve_checklinearform(A,B):
+
+    #checking if A is square matrix
+    if len(A[0]) != len(A):
+        print('A is not square matrix')
+        return False
+
+    #checking B is a column matrix
+    for i in range(len(B)):
+        if len(B[i]) != 1:
+            print('B is not a column matrix')
+            return False
+
+    #checking if B has same number of elements as rows of A
+    if len(A) != len(B):
+        print('B is not compatible with A dimensions') 
+        return False
+    return True 
+
 def inv_mat_GJ(A):
 
     if len(A) != len(A[0]): #if not square matrix, exit
@@ -363,6 +382,11 @@ def solve_GJ(A,B):
     #solves linear equations using Gauss-Jordon elimination method
     #takes the A and B matrix as input from the form A.X = B where X is the unknown matrix
     #returns solved X 
+
+    #checking if matA and matB properly represent linear equation form
+    if solve_checklinearform(A,B) == False:
+        print('The matrices doesnt properly represent linear eqns form')
+        return None
     
     n = len(A) #the dimension is a frequently used value, therefore stored.
     
@@ -440,7 +464,6 @@ def mat_det(A):
 def Chol_dec(A):
     #function that performs the Cholesky decomposition on A and returns (L and T_transpose superimposed matrix where the diagonal of both are same).
 
-
     #IF NOT SYMMETRIC, EXIT.
     if check_symmetry(A) == False:
         print('Non symmetric!')
@@ -448,8 +471,9 @@ def Chol_dec(A):
 
     n = len(A)
 
+    #Performing the decomposition
     for row in range(n):
-        for col in range(row,n):
+        for col in range(row,n): #I am finding the L_transpose and copying elements to the lower part to complete the decomposition
             
             if row == col:
                 sum = 0
@@ -461,15 +485,17 @@ def Chol_dec(A):
                 for i in range(row):
                     sum += (A[row][i] * A[i][col])
                 A[row][col] = (A[row][col] - sum) / A[row][row]
-                A[col][row] = A[row][col]
+                A[col][row] = A[row][col] #As the matrix isresultant L-L_transpose matrix is symmetric
 
     return A
 
-def forward_backward_cholesky(A,B):
+def forward_backward_cholesky(A,B): 
+    # Performs forward substitution and backward substitution given an (L-Ltranspose superimposed) matrix A and and matrix B. returns X.
     if A is None:
         print('Cholesky decomposition failed!')
         return None
     
+    #forward substition
     Y = []
     n = len(B)
     for i in range(n):
@@ -478,7 +504,9 @@ def forward_backward_cholesky(A,B):
             sum += (A[i][j] * Y[j])
         Y.append((B[i][0]-sum) / A[i][i])
 
-    X = Y
+    #backward substitution
+    X = Y # Here X and Y can be stored in the same matrix due to the way of calculation, for the sake understanding I have made a name X.
+          # By assigning a matrix like this, only a another name for the same list is created.
     for i in range(n-1,-1,-1):
         sum = 0
         for j in range(i + 1, n):
@@ -491,17 +519,21 @@ def forward_backward_cholesky(A,B):
     return X
 
 def solve_Cholesky(A,B): 
-    #solves AX = B using cholesky Decomposition
+    #solves AX = B using cholesky Decomposition. Returns X.
 
+    #checking if matA and matB properly represent linear equation form
+    if solve_checklinearform(A,B) == False:
+        print('The matrices doesnt properly represent linear eqns form')
+        return None
+    
     A = Chol_dec(A)
     if A is None:
         print('Cholesky Solve not possible!')
         return None
 
-    
-    return forward_backward_cholesky(A,B)
+    return forward_backward_cholesky(A,B) #Calling forward backward substitution on Cholesky decomposed A and B and returning the solution
 
-def LU_dec(A):
+def LU_dec(A,B):
     # performs doolittle method LU decompostition of A and return a (L and U superimposed matrix where L_ii = 1 is understood).
 
     n = len(A) #matrix dimension
@@ -537,7 +569,9 @@ def LU_dec(A):
                 print('Reordering incomplete! submat of order',i+1,'has determinant zero while the matrix itself is non singular.') #this is not supposed to happen, still added in case of any unexpected exception.
                 return None
             A[i],A[curr] = A[curr],A[i] #then the original A matrix is changed as per the non-singular submatrix swap.
+            B[i],B[curr] = B[curr],B[i] #then the original B matrix is changed as per the non-singular submatrix swap.
 
+    #performing LU decompostion
     for j in range(n):
         for i in range(1,n):
             if i <= j:
@@ -550,7 +584,7 @@ def LU_dec(A):
                 for k in range(0,j):
                     sum += (A[i][k] * A[k][j])
                 A[i][j] = (A[i][j] - sum) / A[j][j]
-    return A
+    return A,B
 
     
 def forward_backward_LU(A,B):
@@ -568,7 +602,7 @@ def forward_backward_LU(A,B):
         Y.append(B[i][0]-sum)
     
     #now we solve U.X = Y
-    X = Y[:]
+    X = Y
     for i in range(n-1,-1,-1):
         sum = 0
         for j in range(i + 1, n):
@@ -582,24 +616,69 @@ def forward_backward_LU(A,B):
     return X
 
 def LU_solve(A,B):
-    return forward_backward_LU(LU_dec(A),B) #Calling forward backward substitution of LU on LU decomposed A and B
+    #solves the set of linear eqn.s in the form of AX = B using LU decomposition method
 
+    #checking if matA and matB properly represent linear equation form
+    if solve_checklinearform(A,B) == False:
+        print('The matrices doesnt properly represent linear eqns form')
+        return None
 
+    #PErforming the LU decomposition
+    A,B = LU_dec(A,B)
 
+    return forward_backward_LU(A,B) #Calling forward backward substitution of LU on LU decomposed A and B and returning the solution
+
+def mat_makeSDD(A,B):
+    #makes a strictly diagonally dominant matrix A after row swaps on A and the same row operations on B. returns both.
+
+    n = len(A)
+    
+
+    for i in range(n):
+        sum = 0
+        for j in range(n):
+            if j != i:
+                sum += abs(A[i][j])
+        if abs(A[i][i]) > sum: #checkis if leading element is strictly dominant over others in the row. if so, continue to the next row.
+            continue
+        else: #else, check for the same position dominance in next rows.
+            curr = i + 1
+            flag = 0
+            while curr < n:
+                sum = 0
+                for j in range(n):
+                    if j != i:
+                        sum += abs(A[curr][j])
+                if abs(A[curr][i]) > sum:
+                    flag = 1
+                    break
+                else:
+                    curr += 1
+            if flag == 0: #if no dominant term was found in the rows below, it cannot be made strictly diagonally dominant matrix.
+                          #it is so, from the fact that a row/column cannot have 2 diagonally dominant terms, no row/column swap can separate those.
+                return None,None
+            else:
+                A[i],A[curr] = A[curr],A[i]
+                B[i],B[curr] = B[curr],B[i]
+    return A,B
 
 def solve_GS(A,B,tolerance):
     #solving linear equations (A.X=B) using Gauss-seidel method with tolerace, where X is the solution. return solution X and number of steps in which it is done
+    
+    #checking if matA and matB properly represent linear equation form
+    if solve_checklinearform(A,B) == False:
+        print('The matrices doesnt properly represent linear eqns form')
+        return None    
+    
     n = len(A)
 
-    #checking if its symmetric
-    if check_symmetry(A) == False:
-        print('matrix not symmetric')
-        return None
-
-    #diagonally dominant
+    #trying to make strictly diagonally dominant
+    A,B= mat_makeSDD(A,B)
+    if A is None:
+        print('matrix cannot be made strictly diagonally dominant\nGauss-Seidel method exited!')
     
 
-    X = list([0] for i in range(n)) #guess
+    X = list([0] for i in range(n)) # initial guess
     
     for steps in range(100):
         flag = 1
@@ -610,10 +689,55 @@ def solve_GS(A,B,tolerance):
             for j in range(i+1,n):
                 sum += (A[i][j] * X[j][0])
             temp = (B[i][0] - sum) / (A[i][i])
-            if abs(abs(temp) - abs(X[i][0])) > tolerance:
+            if abs((temp) - (X[i][0])) > tolerance: #checks the tolerance at each new value
                 flag = 0
             X[i][0] = temp
         if flag == 1:
             return X,steps + 1
     print('Eqn not solved after 100 steps')
     return None,100
+
+def solve_Jacobi(A,B,tolerance):
+
+    #checking if matA and matB properly represent linear equation form
+    if solve_checklinearform(A,B) == False:
+        print('The matrices doesnt properly represent linear eqns form')
+        return None
+
+    #trying to make strictly diagonally dominant
+    A,B= mat_makeSDD(A,B)
+    if A is None:
+        print('matrix cannot be made strictly diagonally dominant\nJacobi method exited!')
+
+    n = len(A)
+
+    currX = [0] * n # initial guess
+    newX = currX[:] # new guess, to be processed
+
+    steps = 0
+    while steps < 150: #max steps kept high for 10^-6 precision
+        
+        #finding new X
+        for i in range(n):
+            sum = 0
+            for j in range(n):
+                if i != j: sum += (A[i][j] * currX[j])
+            newX[i] = (B[i][0] - sum) / A[i][i]
+
+        #comparing newX and currentX against tolerance
+        flag = 1 #assumed true
+        for i in range(n):
+            if abs(newX[i]-currX[i]) > tolerance:
+                flag = 0 #looking for exception
+                steps += 1
+                currX = newX[:]
+                break
+        
+        if flag == 1:
+            #converting the answer to column matrix
+            for i in range(n):
+                newX[i] = [newX[i]]
+            return newX, steps
+    #if not done in 150 steps, return None
+    print('After more than 150 iterations, it is not solved!')
+    return None, steps

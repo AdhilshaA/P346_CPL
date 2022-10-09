@@ -25,7 +25,7 @@ print('\nUsing Cholesky decomposition method to solve this, we get the solution:
 lib.print_mat(lib.solve_Cholesky(matAcopy,matB))
 
 X,steps = lib.solve_GS(matA, matB, 0.000001)
-print('\n Using the Gauss-Seidel method with precision 10^(-6), we the solution in',steps,'steps as:\n(To see the precision I have display upto 8 decimal points)')
+print('\n Using the Gauss-Seidel method with precision 10^(-6), we get the solution in',steps,'steps as:\n(To see the precision I have display upto 8 decimal points)')
 lib.print_mat2(X) #change of matA is fine as we dont have any more use; moreover LU works like that to save space.
 
 ######-----  OUTPUT  -----######
