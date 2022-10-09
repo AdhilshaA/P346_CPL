@@ -1,14 +1,6 @@
 # A library updated to all functions till the current assignment
 from math import sqrt
 import matplotlib.pyplot as plt
-global g_term   
-global g_a
-global g_c
-global g_m
-g_a = 1103515245
-g_c = 12345
-g_m = 32768
-g_term = 68461684 #some random number
 
 def sum_odd(n):
     #returns sum of n odd numbers
@@ -74,7 +66,18 @@ def mat_mult(A,B):
 
     return sum
 
+def mat_copy(A):
+    #returns a copy of the matrix without any links in memory
+    A1 = []
+    for i in range(len(A)):
+        A1.append(A[i][:]) #splicing done to avoid changes linking
+    return A1
+
 def print_mat(A):
+    #prints matrix with floats upto 4 decimal points
+    if A is None:
+        print('None')
+        return
     #printing a given matrix A
     maxs = []
     for j in range(len(A[0])):  #finding maximum integer length in each column and saving to maxs list
@@ -95,10 +98,40 @@ def print_mat(A):
             spaces = maxs[j] - length
             stop = (spaces) // 2       #finding how many spaces before and after each term to align centrally in each column
             start = spaces - stop
-            print(' ' * start,'{:.2f}'.format(A[i][j]),' ' * stop, end = '')
+            print(' ' * start,'{:.4f}'.format(A[i][j]),' ' * stop, end = '')
         print(' ]')
     print('')
-      
+
+def print_mat2(A):
+    #prints matrix with floats upto 8 decimal points
+
+    if A is None:
+        print('None')
+        return
+    #printing a given matrix A
+    maxs = []
+    for j in range(len(A[0])):  #finding maximum integer length in each column and saving to maxs list
+        max = 0
+        for i in range(len(A)):
+            length = len(str(int(A[i][j])))
+            if max < length:
+                max = length
+        maxs.append(max + 2)   #adding 2 for equal space left and right to the maximum long term
+    
+    #printing
+    for i in range(len(A)):
+        print('[ ',end='')
+        for j in range(len(A[0])):
+            val = A[i][j]
+            length = len(str(int(val))) 
+            if int(val) == 0 and val < 0: length += 1
+            spaces = maxs[j] - length
+            stop = (spaces) // 2       #finding how many spaces before and after each term to align centrally in each column
+            start = spaces - stop
+            print(' ' * start,'{:.8f}'.format(A[i][j]),' ' * stop, end = '')
+        print(' ]')
+    print('')
+
 def mat_dot(A,B):
     #returns the dot product of two column matrices
     if len(A) != len(B) or len(A[0]) != 1 or len(B[0]) != 1: #works only if column matrice sof same length
@@ -224,20 +257,6 @@ class randgen():
         self.term = (((self.a * self.term) + self.c) % self.m)
         return self.term / self.m
 
-
-def LCGstart(seed, a = 1103515245, c = 12345 ,m = 32768):
-    # function for LCG that generates random numbers in range (0,1)
-    #default a, c, m value set. can change in case specified.
-    g_a = a
-    g_c = c
-    g_m = m
-    g_term = seed
-
-def nextrand():
-
-    g_term = (((g_a * g_term) + g_c) % g_m)
-    return g_term / g_m
-
 def LCG(seed, length, a = 1103515245, c = 12345 ,m = 32768):
     # function for LCG that generates random numbers in range (0,1)
     #default a, c, m value set. can change in case specified.
@@ -341,49 +360,53 @@ def inv_mat_GJ(A):
     return I
 
 def solve_GJ(A,B):
-    #solves linear equations using Gauss-Jordon method
+    #solves linear equations using Gauss-Jordon elimination method
     #takes the A and B matrix as input from the form A.X = B where X is the unknown matrix
     #returns solved X 
-
-    #constructing augmented matrix 
-    augmat = A
-    for row in range(len(augmat)):
-        augmat[row].append(B[row])
     
-    for curr in range(len(augmat)): #curr takes the index of each column we are processing
+    n = len(A) #the dimension is a frequently used value, therefore stored.
+    
+    #convering matrix A into augmented matrix 
+    for row in range(n):
+        A[row].append(B[row][0])
+    
+    for curr in range(n): #curr takes the index of each column we are processing
         #row swap if zero
-        if augmat[curr][curr] == 0:
+        if A[curr][curr] == 0:
             max_row = curr
-            for row in range(curr + 1,len(augmat)):
+            for row in range(curr + 1,n):
 
-                if abs(augmat[row][curr]) > abs(augmat[max_row][curr]):
+                if abs(A[row][curr]) > abs(A[max_row][curr]):
                     max_row = row
             if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
                 return None
-            augmat[curr],augmat[max_row] = augmat[max_row], augmat[curr]
+            A[curr],A[max_row] = A[max_row], A[curr]
+
 
         #making the pivot element 1
-        if augmat[curr][curr] != 1:
-            pivot_term = augmat[curr][curr]
-            for i in range(len(augmat[curr])):
-                augmat[curr][i] = augmat[curr][i] / pivot_term
-
+        if A[curr][curr] != 1:
+            pivot_term = A[curr][curr]
+            for i in range(n + 1):
+                A[curr][i] = A[curr][i] / pivot_term
+     
         #making others zero
-        for i in range(0,len(augmat)):
+        for i in range(0,n):
             if i == curr: #skipping the pivot point
                 continue
-            if augmat[i][curr] != 0:
-                lead_term = augmat[i][curr]
-                for j in range(curr,len(augmat[i])): #elements before the curr column are zero in curr row, so no need to calculate
-                    augmat[i][j] = augmat[i][j] - (augmat[curr][j] * lead_term)
-        print_mat(augmat)
+            if A[i][curr] != 0:
+                main_term = A[i][curr] 
+                for j in range(curr,n + 1): #A[curr][j] is zero for j<curr, so no changes to the elements to the left in this row.
+                    A[i][j] = A[i][j] - (A[curr][j] * main_term)
+
     solution = []
-    for i in range(len(augmat)):
-        solution.append([augmat[i][-1]]) #Taking last elements into a list to form column matrix
+    for i in range(n):
+        solution.append([A[i][-1]]) #Taking last elements into a list to form column matrix
     return solution
 
 def mat_det(A):
+    #matrix determinant using row echelon form
     n = len(A)
+    rowswaps = 0 #no. of row swaps done
     if n != len(A[0]):
         print('Not a square matrix')
         return None
@@ -399,22 +422,24 @@ def mat_det(A):
                 print('The matrix is singular!')
                 return None
             A[curr],A[max_row] = A[max_row], A[curr]
+            rowswaps += 1
 
-        #making others zero
+        #making others elements below lead term zero
         for i in range(curr + 1,n):
             if A[i][curr] != 0:
-                lead_term = A[i][curr]/A[curr][curr]
-                for j in range(curr,len(A[i])): #elements before the curr column are zero in curr row, so no need to calculate
-                    A[i][j] = A[i][j] - (A[curr][j] * lead_term)
+                main_term = A[i][curr] / A[curr][curr]
+                for j in range(curr,len(A[i])): #A[curr][j] is zero for j<curr, so no changes to the elements to the left of curr in this row.
+                    A[i][j] = A[i][j] - (A[curr][j] * main_term) 
     prdct = 1
+    if rowswaps % 2 == 1:
+        prdct = -1
     for i in range(n):
         prdct *= A[i][i]
     return prdct
     
 def Chol_dec(A):
-    #function that performs the Cholesky decomposition on A and returns L (Lower filled) when A = (L)(Ltranspose)
+    #function that performs the Cholesky decomposition on A and returns (L and T_transpose superimposed matrix where the diagonal of both are same).
 
-    #if detA is 0 then dont , add feauture later
 
     #IF NOT SYMMETRIC, EXIT.
     if check_symmetry(A) == False:
@@ -437,22 +462,23 @@ def Chol_dec(A):
                     sum += (A[row][i] * A[i][col])
                 A[row][col] = (A[row][col] - sum) / A[row][row]
                 A[col][row] = A[row][col]
-        
+
     return A
 
-
 def forward_backward_cholesky(A,B):
+    if A is None:
+        print('Cholesky decomposition failed!')
+        return None
+    
     Y = []
     n = len(B)
     for i in range(n):
         sum = 0
         for j in range(i):
             sum += (A[i][j] * Y[j])
-        Y.append((B[i][0]-sum)/A[i][i])
+        Y.append((B[i][0]-sum) / A[i][i])
 
-    #for the sake of understanding, I am using separate name X. but the X and Y are practically same as they are linked by memory location.
-    #this is fine as the none of the calculations are being none of the calculation is interfered.
-    X = Y 
+    X = Y
     for i in range(n-1,-1,-1):
         sum = 0
         for j in range(i + 1, n):
@@ -461,10 +487,10 @@ def forward_backward_cholesky(A,B):
 
     for i in range(n):
         X[i] = [X[i]]
+    
+    return X
 
-    return Y
-
-def Cholesky_solve(A,B): 
+def solve_Cholesky(A,B): 
     #solves AX = B using cholesky Decomposition
 
     A = Chol_dec(A)
@@ -472,17 +498,46 @@ def Cholesky_solve(A,B):
         print('Cholesky Solve not possible!')
         return None
 
-    # Finding Y from (L)(Y) = B by forwarwd substitution
-
-    # Finding X from (Lt)(X) = (Y) by backward substitution
     
     return forward_backward_cholesky(A,B)
 
 def LU_dec(A):
-    n = len(A)
-    if n != len(A[0]):
+    # performs doolittle method LU decompostition of A and return a (L and U superimposed matrix where L_ii = 1 is understood).
+
+    n = len(A) #matrix dimension
+    if n != len(A[0]): #checking if the given matrix is a square matrix
         print('Not square!')
         return None
+    
+    # checking if the determinant of A matrix is 0, if so no unique solution exist
+    A1 = mat_copy(A)
+    if mat_det(A1) == 0:
+        print('Singular matrix!')
+        return None
+    
+    #making leading submatrices non-zero by pivoting
+    for i in range(n-1): #last sub matrix is the matarix itself, so avoided.
+        
+        #constructing submatrix
+        submat = []
+        for j in range(i+1):
+            submat.append(A[j][:i+1])
+        
+        if mat_det(submat) == 0: #if submat determinant is zero, the last row is replaced with the next rows until the det is non zero. 
+            curr = i + 1
+            flag = 0
+            while curr != n:
+                submat[i] = A[curr][:i+1]
+                if mat_det(submat) != 0:
+                    flag = 1
+                    break
+                else:
+                    curr += 1
+            if flag == 0:
+                print('Reordering incomplete! submat of order',i+1,'has determinant zero while the matrix itself is non singular.') #this is not supposed to happen, still added in case of any unexpected exception.
+                return None
+            A[i],A[curr] = A[curr],A[i] #then the original A matrix is changed as per the non-singular submatrix swap.
+
     for j in range(n):
         for i in range(1,n):
             if i <= j:
@@ -495,68 +550,70 @@ def LU_dec(A):
                 for k in range(0,j):
                     sum += (A[i][k] * A[k][j])
                 A[i][j] = (A[i][j] - sum) / A[j][j]
-
     return A
 
+    
 def forward_backward_LU(A,B):
-    if A is None:
+
+    if A is None: #checking if LU decomposition failed
         print('LU decomposition failed!')
         return None
-    Y = []
+
+    Y = [] # the intermidiate Y matrix where Y = U.X .thus Y is also be in equation L.Y = B, we solve this first
     n = len(B)
     for i in range(n):
         sum = 0
         for j in range(i):
             sum += (A[i][j] * Y[j])
         Y.append(B[i][0]-sum)
+    
+    #now we solve U.X = Y
     X = Y[:]
     for i in range(n-1,-1,-1):
         sum = 0
         for j in range(i + 1, n):
             sum += (A[i][j] * X[j])
         X[i] = (Y[i] - sum) / A[i][i]
+
+    #making X into column matrix
     for i in range(n):
         X[i] = [X[i]]
 
     return X
 
 def LU_solve(A,B):
-    return forward_backward_LU(LU_dec(A),B)
+    return forward_backward_LU(LU_dec(A),B) #Calling forward backward substitution of LU on LU decomposed A and B
 
-def mat_eigenvalues(A):
 
+
+
+def solve_GS(A,B,tolerance):
+    #solving linear equations (A.X=B) using Gauss-seidel method with tolerace, where X is the solution. return solution X and number of steps in which it is done
     n = len(A)
-    if n != len(A[0]):
-        print('Not a square matrix')
-        return None
-    for curr in range(n): #curr takes the index of each column we are processing
-        #row swap if zero
-        if A[curr][curr] == 0:
-            max_row = curr
-            for row in range(curr + 1,n):
 
-                if abs(A[row][curr]) > abs(A[max_row][curr]):
-                    max_row = row
-            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
-                print('The matrix is singular!')
-                return None
-            A[curr],A[max_row] = A[max_row], A[curr]
-
-        #making others zero
-        for i in range(n):
-            if i == j:
-                continue
-            if A[i][curr] != 0:
-                lead_term = A[i][curr]/A[curr][curr]
-                for j in range(curr,len(A[i])): #elements before the curr column are zero in curr row, so no need to calculate
-                    A[i][j] = A[i][j] - (A[curr][j] * lead_term)
-    
-    return [A[i][i] for i in range(n)]
-
-def check_pos_definite(A):
+    #checking if its symmetric
     if check_symmetry(A) == False:
-        print('A not symmetric!')
-        return False
-    z = list([1] for i in range(len(A)))
+        print('matrix not symmetric')
+        return None
 
-    return True
+    #diagonally dominant
+    
+
+    X = list([0] for i in range(n)) #guess
+    
+    for steps in range(100):
+        flag = 1
+        for i in range(n):
+            sum = 0
+            for j in range(i):
+                sum += (A[i][j] * X[j][0])
+            for j in range(i+1,n):
+                sum += (A[i][j] * X[j][0])
+            temp = (B[i][0] - sum) / (A[i][i])
+            if abs(abs(temp) - abs(X[i][0])) > tolerance:
+                flag = 0
+            X[i][0] = temp
+        if flag == 1:
+            return X,steps + 1
+    print('Eqn not solved after 100 steps')
+    return None,100

@@ -1,0 +1,19 @@
+# inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.
+#PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.
+
+#   Matrix A in the equation A.X = B
+float_mat matA
+4 0 4 10 1
+0 4 2 0 1
+2 5 1 3 13
+11 3 0 1 2
+3 2 7 1 0
+#    Matrix B in the equation A.X = B
+float_mat matB
+20
+15
+92
+51
+15
+# EndOfInput
+EOF
