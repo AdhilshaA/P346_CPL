@@ -164,3 +164,87 @@ def solve_Jacobi(A,B,tolerance):
                 newX[i] = [newX[i]]
             return newX, steps
     return None, steps
+
+def Chol_dec(A):
+    if check_symmetry(A) == False:
+        return None
+    n = len(A)
+    for row in range(n):
+        for col in range(row,n):
+            if row == col:
+                sum = 0
+                for i in range(row):
+                    sum += (A[row][i] ** 2)
+                A[row][row] = sqrt(A[row][row] - sum)
+            else:
+                sum = 0
+                for i in range(row):
+                    sum += (A[row][i] * A[i][col])
+                A[row][col] = (A[row][col] - sum) / A[row][row]
+                A[col][row] = A[row][col]
+    return A
+def forwardbackward_cholesky(A,B):
+    if A is None:
+        print('Cholesky decomposition failed!')
+        return None
+    Y = []
+    n = len(B)
+    for i in range(n):
+        sum = 0
+        for j in range(i):
+            sum += (A[i][j] * Y[j])
+        Y.append((B[i][0]-sum)/ A[i][i])
+    for i in range(n-1,-1,-1):
+        sum = 0
+        for j in range(i + 1, n):
+            sum += (A[i][j] * Y[j])
+        Y[i] = (Y[i] - sum) / A[i][i]
+    return Y
+def solve_Cholesky(A,B): 
+    return forwardbackward_cholesky(Chol_dec(A),B)
+
+
+def poly_fit(X,Y,k):
+
+    n = len(X)
+
+    A = [[0]*(k+1) for i in range(k+1)]
+
+    A[0][0] = n
+    for i in range(1,(2 * k) + 1):
+        sum = 0
+        for j in range(n):
+            sum += (X[j]**i)
+        if i <= k:
+            row = 0
+            col = i
+            while col >= 0:
+                A[row][col] = sum
+                col -= 1
+                row += 1
+        else:
+            row = i - k
+            col = k
+            while row <= k:
+                A[row][col] = sum
+                col -= 1
+                row += 1
+
+    B = []
+    sum = 0
+    for i in range(n):
+        sum += Y[i]
+    B.append([sum])
+    for i in range(1,k+1):
+        sum = 0
+        for j in range(n):
+            sum += (X[j]**i)*Y[j]
+        B.append([sum])
+
+
+    px = lib.solve_GJ(A,B)
+    
+    for j in range(len(px)):
+        px[j] = px[j][0]
+
+    return px

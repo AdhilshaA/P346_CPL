@@ -1,6 +1,6 @@
 # A library updated to all functions till the current assignment
 from math import sqrt
-from re import A        
+import math as m
 import matplotlib.pyplot as plt
     
 def sum_odd(n):
@@ -317,14 +317,13 @@ def solve_GJ(A,B):
     #constructing augmented matrix 
     augmat = A
     for row in range(len(augmat)):
-        augmat[row].append(B[row])
+        augmat[row].append(B[row][0])
     
     for curr in range(len(augmat)): #curr takes the index of each column we are processing
         #row swap if zero
         if augmat[curr][curr] == 0:
             max_row = curr
             for row in range(curr + 1,len(augmat)):
-
                 if abs(augmat[row][curr]) > abs(augmat[max_row][curr]):
                     max_row = row
             if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
@@ -345,7 +344,6 @@ def solve_GJ(A,B):
                 lead_term = augmat[i][curr]
                 for j in range(curr,len(augmat[i])): #elements before the curr column are zero in curr row, so no need to calculate
                     augmat[i][j] = augmat[i][j] - (augmat[curr][j] * lead_term)
-        print_mat(augmat)
     solution = []
     for i in range(len(augmat)):
         solution.append([augmat[i][-1]]) #Taking last elements into a list to form column matrix
@@ -506,6 +504,22 @@ def forward_backward_LU(A,B):
 def LU_solve(A,B):
     return forward_backward_LU(LU_dec(A),B)
 
+def mat_eigenvalues(A):
+
+    n = len(A)
+    if n != len(A[0]):
+        print('Not a square matrix')
+        return None
+
+    return
+
+def check_pos_definite(A):
+    if check_symmetry(A) == False:
+        print('A not symmetric!')
+        return False
+
+    #use eigenvalues > 0
+    return True
 
 def root_bracketing(f,a,b):
     for i in range(12):
@@ -519,7 +533,7 @@ def root_bracketing(f,a,b):
         else:
             temp = b
             b = b + (1.5*(b-a))
-            a = temp
+            a = b
     if abs(f(a)) < abs(f(b)):
         return root_bracketing(a - (1.5*(b-a)),b)
     else:
@@ -576,3 +590,181 @@ def root_regulafalsi(f,a,b,epsilon,delta):
         steps += 1
     print('Not converging after 100 steps, terminated')
     return None
+
+
+def lagrange_intrapolate(X,Y,x1):
+    N = len(X)
+    if N != len(Y):
+        print('data mismatch')
+        return None
+    sum = 0
+    for i in range(N):
+        prdct = 1
+        for k in range(N):
+            if k == i:
+                continue
+            prdct = prdct * ((x1 - X[k])/(X[i]-X[k]))
+        sum += prdct * Y[i]
+    return sum
+
+
+def px_deflate(px, root):
+    # here px is in the format a0,a1,a2,..an where n is the polynomial power.
+    n = len(px)
+    #Here, the passed 'root' is a verified root from main body with a certain tolerance, therefore checking not done.
+    if n == 1:
+        print('P(x) doesnt contain any x: deflation exited!')
+        return None
+    n -= 1
+    if px[n] != 1:
+        lead = px[n]
+        for i in range(len(px)):
+            px[i] = px[i] / lead
+    n -= 1
+    while n >= 0:
+        px[n] = (px[n+1] * root) + px[n]
+        n -= 1
+    return px[1:]
+
+
+
+def px_derivative(px):
+        # here px is in the format a0,a1,a2,..an where n is the polynomial power.
+
+    n = len(px)
+    i = 1
+    while i != n:
+        px[i] = px[i] * (i)
+        i += 1
+    return px[1:]
+
+def px_value(px,x):
+        # here px is in the format a0,a1,a2,..an where n is the polynomial power.
+
+    sum = 0
+    i = 0
+    n = len(px)
+    while i != n:
+        sum+= (px[i] * (x**i))
+        i += 1
+    return sum
+
+def root_laguire(px,guess,tolerance):
+        # here px is in the format a0,a1,a2,..an where n is the polynomial power.
+
+    roots = []
+    steps = 1
+    N = len(px) - 1
+    n = N
+    while steps <= N:
+        if abs(px_value(px,guess)) < tolerance:
+            print('{}th root {} found in 0 steps.'.format(steps,guess))
+            steps += 1
+            roots.append(guess)
+            px = px_deflate(px,guess)
+            n -= 1
+            continue
+        # print('Finding the {}th root for {}'.format(steps,px))
+        dpx = px_derivative(px[:])
+        ddpx = px_derivative(dpx[:])
+        i = 1
+        theguess = guess
+        while True:
+            g = px_value(dpx,theguess)/px_value(px,theguess)
+            h = (g**2) - (px_value(ddpx,theguess)/px_value(px,theguess))
+            if g < 0:
+                a = (n / (g - m.sqrt((n-1)*((n*h)-(g**2)))))
+            else:
+                a = (n / (g + m.sqrt((n-1)*((n*h)-(g**2)))))
+            # print('a is',a)
+            newguess = theguess - a
+            # print(px_value(px,theguess),'and',px_value(px, newguess))
+            
+            if i < 26 :
+                # if abs(a) < tolerance and px_value(px,newguess) < tolerance:
+                if px_value(px,newguess) < tolerance:
+                    print('{}th root is {} found in {} steps.'.format(steps,newguess,i))
+                    steps += 1
+                    roots.append(newguess)
+                    px = px_deflate(px,newguess)
+                    n -= 1
+                    break
+                # else:
+                #     print('Guess discarded.\n')
+
+            else:
+                print('The guess for {} th root was not found in 25 steps'.format(steps))
+                return None
+            theguess = newguess
+            i += 1
+    return roots
+
+def fit_leastsq_polynomial(dataX,dataY,order):
+
+
+    n = len(dataX) #no. of datasets
+
+    if len(dataY) != n:
+        print("Data mismatch! exited!")
+        return None
+    
+    order = 2 #the order of polynomial
+
+    matX = [[0]*(order+1) for i in range(order+1)]
+
+    #completing matX
+    matX[0][0] = n
+    for i in range(1,(2 * order) + 1):
+        sum = 0
+        for j in range(n):
+            sum += (dataX[j]**i)
+        if i <= order:
+            startX = 0
+            startY = i
+            while startY >= 0:
+                # print('p',startX,startY)
+
+                matX[startX][startY] = sum
+                startY -= 1
+                startX += 1
+        else:
+            
+            startX = i - order
+            startY = order
+            while startX <= order:
+                # print('p',startX,startY)
+                matX[startX][startY] = sum
+                startY -= 1
+                startX += 1
+
+    matY = []
+    sum = 0
+    for i in range(n):
+        sum += dataY[i]
+    matY.append([sum])
+    for i in range(1,order+1):
+        sum = 0
+        for j in range(n):
+            sum += (dataX[j]**i)*dataY[j]
+        matY.append([sum])
+
+
+    px = solve_GJ(matX,matY)
+    for j in range(len(px)):
+        px[j] = px[j][0]
+
+    return px
+
+def px_graphdata(px,start,stop,number):
+    step = (stop - start) / (number - 1)
+    Xvalues = []
+    Yvalues = []
+    stop += step
+    while start < stop:
+        Xvalues.append(start)
+        Yvalues.append(px_value(px,start))
+        start += step
+    return Xvalues, Yvalues
+
+
+            

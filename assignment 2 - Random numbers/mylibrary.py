@@ -211,26 +211,35 @@ class randgen():
         self.term = (((self.a * self.term) + self.c) % self.m)
         return self.term
 
-def LCG(seed, length, a = 1103515245, c = 12345 ,m = 32768):
-    # function for LCG that generates random numbers in range (0,1)
-    #default a, c, m value set. can change in case specified.
-
-    term = seed
-    RNs = []
-
-    for i in range(0,length):
-        term = (((a * term) + c) % m) #applying eqn.
-        RNs.append((term / m)) #scaling to the range(1)
-    return RNs
+class randgen():
+    def __init__(self,seed, a = 1103515245, c = 12345 ,m = 32768):
+        #initiation of data input
+        self.term = seed
+        self.a = a
+        self.c = c
+        self.m = m
+    def gen(self):
+        #generates a random number in the range (0,1)
+        self.term = (((self.a * self.term) + self.c) % self.m)
+        return self.term / self.m
+    def genlist(self,length):
+        # returns a list of 'n' random numbers in the range (0,1) where 'n' is 'length'.
+        RNs = []
+        for i in range(length):
+            self.term = (((self.a * self.term) + self.c) % self.m)
+            RNs.append(self.term / self.m)
+        return RNs
 
 def Randomwalk2D_sim(seed,steps,start = (0,0)):
+    #REWRITE
     #simulates Random walk, return list of coordinates and prints a Random walk plot.
 
-    Random_numbers = LCG(seed,steps * 2) #need two coordinates
+    random = randgen(seed)
+    # Random_numbers = random.genlist(steps * 2) #need two coordinates
     points = [start] #list of coordinates visited, stored as tuples
     for i in range(steps):
-        x = points[i][0] + (2 * Random_numbers[i]) - 1
-        y = points[i][1] + (2 * Random_numbers[(steps + i)]) - 1
+        x = points[i][0] + (2 * random.gen()) - 1
+        y = points[i][1] + (2 * random.gen()) - 1
         points.append((x,y))
     
     #graph formatting

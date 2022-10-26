@@ -3,38 +3,39 @@ import math as m
 
 def px_deflate(px, root):
 
+    n = len(px)
     #Here, the passed 'root' is a verified root from main body with a certain tolerance, therefore checking not done.
-    if len(px) == 1:
+    if n == 1:
         print('P(x) doesnt contain any x: deflation exited!')
         return None
-    if px[0] != 1:
-        lead = px[0]
+    n -= 1
+    if px[n] != 1:
+        lead = px[n]
         for i in range(len(px)):
             px[i] = px[i] / lead
-    for i in range(1,len(px)):
-        px[i] = (px[i-1] * root) + px[i]
-    return px[:-1]
+    n -= 1
+    while n >= 0:
+        px[n] = (px[n+1] * root) + px[n]
+        n -= 1
+    return px[1:]
 
 
 
 def px_derivative(px):
-    n = len(px) - 1
-    i = 0
-    while n != 0:
-        px[i] = px[i] * (n)
+    n = len(px)
+    i = 1
+    while i != n:
+        px[i] = px[i] * (i)
         i += 1
-        n -= 1
-    return px[:-1]
+    return px[1:]
 
 def px_value(px,x):
-    print('finding',px)
     sum = 0
     i = 0
-    n = len(px) - 1
-    while n >= 0:
-        sum+= (px[i] * (x**n))
+    n = len(px)
+    while i != n:
+        sum+= (px[i] * (x**i))
         i += 1
-        n -= 1
     return sum
 
 
@@ -92,9 +93,8 @@ def root_laguire(px,guess,tolerance):
 
 
 tolerance = 0.0001
-px = [1,-1,-7,1,6]
+px = [6,1,-7,-1,1]
 
 
 guesss = 0
 print(root_laguire(px,guesss,tolerance))
-    

@@ -1,0 +1,32 @@
+#------------inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.-------------------------#
+#----PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.--------#
+#---types can be: int, float, str, complex, int_list, float_list, str_list, int_mat, float_mat, str_mat, xydata (2 var), xysigdata (3 var)-----#
+
+#   fit data from the assignment file 'assign4fit.txt'
+xydata X Y
+0.00 	0.486
+0.05 	0.866
+0.10 	0.944
+0.15 	1.144
+0.20 	1.103
+0.25 	1.202
+0.30 	1.166
+0.35 	1.191
+0.40 	1.124
+0.45 	1.095
+0.50 	1.122
+0.55 	1.102
+0.60 	1.099
+0.65 	1.017
+0.70 	1.111
+0.75 	1.117
+0.80 	1.152
+0.85 	1.265
+0.90 	1.380
+0.95 	1.575
+1.00 	1.857
+#   order of polynomial to be fit
+int order
+3
+# EndOfInput
+EOF

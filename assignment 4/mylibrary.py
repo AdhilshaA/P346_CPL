@@ -1,7 +1,9 @@
 # A library updated to all functions till the current assignment
 from math import sqrt
+import math as m
 import matplotlib.pyplot as plt
-
+from numpy import square
+    
 def sum_odd(n):
     #returns sum of n odd numbers
     sum = 0
@@ -66,18 +68,7 @@ def mat_mult(A,B):
 
     return sum
 
-def mat_copy(A):
-    #returns a copy of the matrix without any links in memory
-    A1 = []
-    for i in range(len(A)):
-        A1.append(A[i][:]) #splicing done to avoid changes linking
-    return A1
-
 def print_mat(A):
-    #prints matrix with floats upto 4 decimal points
-    if A is None:
-        print('None')
-        return
     #printing a given matrix A
     maxs = []
     for j in range(len(A[0])):  #finding maximum integer length in each column and saving to maxs list
@@ -98,7 +89,7 @@ def print_mat(A):
             spaces = maxs[j] - length
             stop = (spaces) // 2       #finding how many spaces before and after each term to align centrally in each column
             start = spaces - stop
-            print(' ' * start,'{:.4f}'.format(A[i][j]),' ' * stop, end = '')
+            print(' ' * start,'{:.2f}'.format(A[i][j]),' ' * stop, end = '')
         print(' ]')
     print('')
 
@@ -130,7 +121,53 @@ def print_mat2(A):
             start = spaces - stop
             print(' ' * start,'{:.8f}'.format(A[i][j]),' ' * stop, end = '')
         print(' ]')
+    print('')  
+
+def print_coltable(data):
+    cols = len(data)
+    key = list(data.keys())
+    rows = 0
+    for k in key:
+        if len(data[k]) > rows:
+            rows = len(data[k])
+    maxchar = []
+    for k in key:
+        max = len(k)
+        for value in data[k]:
+            if (len(str(value // 1))+7) > max:
+                max = len(str(value // 1))
+        maxchar.append(max + 4)
+    i = 0
+    print('',end='',sep ='')
+    for k in key:
+        max = maxchar[i]
+        spaces = (max - len(k))
+        start =  spaces // 2
+        stop = spaces = start
+        print(' '*start,k,' '*stop,'',end = '',sep='')
+        i += 1
     print('')
+    for i in range(rows):
+
+        print('',end='',sep='')
+        start = (maxchar[0] - len(str(data[key[0]][i]))) // 2
+        stop = maxchar[0] - (start + len(str(data[key[0]][i])))
+        print(' '*start,data[key[0]][i],' '*stop,' ',end = '',sep='')
+                
+        for j in range(1,cols):
+            try: spaces = maxchar[j] - (len(str(data[key[j]][i] // 1)) + 7)
+            except:
+                start = maxchar[j] // 2
+                stop = maxchar[j] - (start + 1)
+                print(' '*start,'-',' '*stop,' ',end = '',sep='')
+                continue
+            start = spaces // 2
+            stop = spaces - start
+            print(' '*start,end='',sep = '')
+            print('{:f}'.format(data[key[j]][i]),end='',sep = '')
+            print(' '*stop,'',end='',sep = '')
+        print('')   
+
 
 def mat_dot(A,B):
     #returns the dot product of two column matrices
@@ -140,6 +177,13 @@ def mat_dot(A,B):
     for row in range(len(A)):
         dotprdct += (A[row][0] * B[row][0])
     return dotprdct
+
+def mat_copy(A):
+    #returns a copy of the matrix without any links in memory
+    A1 = []
+    for i in range(len(A)):
+        A1.append(A[i][:]) #splicing done to avoid changes linking
+    return A1
 
 def check_symmetry(A):
     #Function to check symmetry of A, return True or False
@@ -183,9 +227,12 @@ def parse(file_name):
     # A function to parse data in a specific format. Read README file in the repository for more details
     with open(file_name) as file:
         lines = file.readlines()
+        file.close()
     inputs = {}
     numlines = len(lines)
     line_index = 3
+    while bool(lines[line_index].split()) is False:
+        line_index += 1
     while line_index < numlines:
         line_index += 2
         type_name = lines[line_index - 1].split()
@@ -243,7 +290,33 @@ def parse(file_name):
             while lines[line_index][0] != '#':
                 inputs[type_name[1]].append(lines[line_index].split())
                 line_index += 1
-    
+
+        elif type_name[0] == 'xydata':
+            inputs[type_name[1]] = []
+            inputs[type_name[2]] = []
+            while lines[line_index][0] != '#':
+                lines[line_index] = lines[line_index].split()
+                try:
+                    inputs[type_name[1]].append(float(lines[line_index][0]))
+                    inputs[type_name[2]].append(float(lines[line_index][1]))
+                except:
+                    print('{} input inproper! check {}'.format(type_name[0],file_name))
+                line_index += 1
+
+        elif type_name[0] == 'xysigdata':
+            inputs[type_name[1]] = []
+            inputs[type_name[2]] = []
+            inputs[type_name[3]] = []
+            while lines[line_index][0] != '#':
+                lines[line_index] = lines[line_index].split()
+                try:
+                    inputs[type_name[1]].append(float(lines[line_index][0]))
+                    inputs[type_name[2]].append(float(lines[line_index][1]))
+                    inputs[type_name[3]].append(float(lines[line_index][2]))
+                except:
+                    print('{} input inproper! check {}'.format(type_name[0],file_name))
+                line_index += 1
+
         else:
             return inputs
 
@@ -254,10 +327,12 @@ class randgen():
         self.a = a
         self.c = c
         self.m = m
+
     def gen(self):
         #generates a random number in the range (0,1)
         self.term = (((self.a * self.term) + self.c) % self.m)
         return self.term / self.m
+
     def genlist(self,length):
         # returns a list of 'n' random numbers in the range (0,1) where 'n' is 'length'.
         RNs = []
@@ -328,7 +403,7 @@ def solve_checklinearform(A,B):
     if len(A) != len(B):
         print('B is not compatible with A dimensions') 
         return False
-    return True 
+    return True
 
 def inv_mat_GJ(A):
 
@@ -398,6 +473,7 @@ def solve_GJ(A,B):
         if A[curr][curr] == 0:
             max_row = curr
             for row in range(curr + 1,n):
+
                 if abs(A[row][curr]) > abs(A[max_row][curr]):
                     max_row = row
             if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
@@ -638,6 +714,7 @@ def mat_makeSDD(A,B):
             if j != i:
                 sum += abs(A[i][j])
         if abs(A[i][i]) > sum: #checkis if leading element is strictly dominant over others in the row. if so, continue to the next row.
+            # print('row',i,'is fine')
             continue
         else: #else, check for the same position dominance in next rows.
             curr = i + 1
@@ -647,13 +724,14 @@ def mat_makeSDD(A,B):
                 for j in range(n):
                     if j != i:
                         sum += abs(A[curr][j])
+                # print('sum is',sum)
                 if abs(A[curr][i]) > sum:
                     flag = 1
                     break
                 else:
                     curr += 1
             if flag == 0: #if no dominant term was found in the rows below, it cannot be made strictly diagonally dominant matrix.
-                          #it is so, from the fact that a row/column cannot have 2 diagonally dominant terms, no row/column swap can separate those.
+                # print('failed at',i)          #it is so, from the fact that a row/column cannot have 2 diagonally dominant terms, no row/column swap can separate those.
                 return None,None
             else:
                 A[i],A[curr] = A[curr],A[i]
@@ -670,10 +748,10 @@ def solve_GS(A,B,tolerance):
     
     n = len(A)
 
-    #trying to make strictly diagonally dominant
-    A,B= mat_makeSDD(A,B)
-    if A is None:
-        print('matrix cannot be made strictly diagonally dominant\nGauss-Seidel method exited!')
+    #trying to make strictly diagonally dominant , now DISABLED
+    # A,B= mat_makeSDD(A,B)   
+    # if A is None:
+    #     print('matrix cannot be made strictly diagonally dominant\nGauss-Seidel method exited!')
     
 
     X = list([0] for i in range(n)) # initial guess
@@ -740,40 +818,484 @@ def solve_Jacobi(A,B,tolerance):
     print('After more than 150 iterations, it is not solved!')
     return None, steps
 
-def mat_eigenvalues(A):
+def root_bracketing(f,a,b):
+    for i in range(12):
+        if f(a) * f(b) < 0:
+            return a,b
+        if abs(f(a)) < abs(f(b)):
+            # print("left")
+            temp = a
+            a = a - (1.5*(b-a))
+            b = temp
+            # print('a={},b={}'.format(a,b))
+        else:
+            # print("right")
+            temp = b
+            b = b + (1.5*(b-a))
+            a = temp
+            # print('a={},b={}'.format(a,b))
+    if abs(f(a)) < abs(f(b)):
+        return root_bracketing(a - (1.5*(b-a)),b)
+    else:
+        return root_bracketing(a,b + 1.5*(abs(b-a)))
 
-    n = len(A)
-    if n != len(A[0]):
-        print('Not a square matrix')
+def root_bisection(f,a,b,epsilon,delta,details = False):
+
+    # bracketing the root if not already done
+    a,b = root_bracketing(f,a,b)
+
+    steps = 1
+
+    #if details kept true, it will return a list of the values converging to the required root
+    if details is True: 
+        tables = []
+        while steps<100:
+            if (a-b) < epsilon:
+                if abs(f(a)) < delta or abs(f(b)) < delta:
+                    return tables
+            c = (a + b) / 2
+            tables.append(c)
+            if f(a) * f(c) < 0:
+                b = c
+            else:
+                a = c
+            steps += 1
+        print('Not converging after 100 steps, terminated')
         return None
-    for curr in range(n): #curr takes the index of each column we are processing
-        #row swap if zero
-        if A[curr][curr] == 0:
-            max_row = curr
-            for row in range(curr + 1,n):
 
-                if abs(A[row][curr]) > abs(A[max_row][curr]):
-                    max_row = row
-            if max_row == curr: #if max elemnt is still zero, max_row is not changed; no unique solution
-                print('The matrix is singular!')
-                return None
-            A[curr],A[max_row] = A[max_row], A[curr]
+    #if details kept False (default), it will return the root and the number of steps taken
+    else: 
+        while steps<100:
+            if (a-b) < epsilon:
+                if abs(f(a)) < delta or abs(f(b)) < delta:
+                    return (a+b)/2,steps
+            c = (a + b) / 2
+            if f(a) * f(c) < 0:
+                b = c
+            else:
+                a = c
+            steps += 1
+        print('Not converging after 100 steps, terminated')
+        return None,None
 
-        #making others zero
-        for i in range(n):
-            if i == j:
-                continue
-            if A[i][curr] != 0:
-                lead_term = A[i][curr]/A[curr][curr]
-                for j in range(curr,len(A[i])): #elements before the curr column are zero in curr row, so no need to calculate
-                    A[i][j] = A[i][j] - (A[curr][j] * lead_term)
+def root_newtonraphson(f,df,x0,epsilon,delta,details = False):
+    #returns the root for function f from guess x0 with epsilon tolerance for closeness to root and delta tolerance for f's closeness to zero at that root
+    if details is True:
+        tables = []
+        steps = 1
+        while steps < 151: #100 steps as max. limit
+
+            #new guess
+            x1 = x0 - (f(x0)/df(x0))
+            tables.append(x1)
+            #checking is guess is good enough
+            if abs(x1 - x0) < epsilon and f(x1) < delta:
+                return tables
+
+            #preparing for next iteration
+            x0 = x1
+            steps += 1
+        
+        print('Not converging after 151 steps, terminated')
+        return None
+    else:
+        steps = 1
+        while steps < 151: #100 steps as max. limit
+
+            #new guess
+            x1 = x0 - (f(x0)/df(x0))
+
+            #checking is guess is good enough
+            if abs(x1 - x0) < epsilon and f(x1) < delta:
+                return x1,steps
+
+            #preparing for next iteration
+            x0 = x1
+            steps += 1
+        
+        print('Not converging after 151 steps, terminated')
+        return None,None
+
+def root_regulafalsi(f,a,b,epsilon,delta,details = False):
     
-    return [A[i][i] for i in range(n)]
+    #bracketing the root if not done
+    a,b = root_bracketing(f,a,b)
 
-def check_pos_definite(A):
-    if check_symmetry(A) == False:
-        print('A not symmetric!')
-        return False
-    z = list([1] for i in range(len(A)))
+    # doing the first run, as no comparison is done here
+    c = b - (((b-a)*f(b))/(f(b) - f(a)))
+    if f(c)*f(a) < 0:
+        b = c
+    else:
+        a = c
 
-    return True
+    #if details kept true, it will return a list of the values converging to the required root
+    if details is True:
+        #adding the c from first step
+        tables = []
+        tables.append(c)
+
+        steps = 2
+        while steps < 100:
+            oldc = c
+            c = b - (((b-a)*f(b))/(f(b) - f(a)))
+            tables.append(c)
+            if f(c)*f(a) < 0:
+                b = c
+            else:
+                a = c
+            if abs(c-oldc) < epsilon and f(c) < delta:
+                return tables
+            oldc = c
+            steps += 1
+        print('Not converging after 100 steps, terminated')
+        return None,None
+    
+    #if details kept False (default), it will return the root and the number of steps taken
+    else:
+        steps = 2
+        while steps < 100:
+            oldc = c
+            c = b - (((b-a)*f(b))/(f(b) - f(a)))
+            if f(c)*f(a) < 0:
+                b = c
+            else:
+                a = c
+            if abs(c-oldc) < epsilon and f(c) < delta:
+                return c,steps
+            oldc = c
+            steps += 1
+        print('Not converging after 100 steps, terminated')
+        return None,None
+
+
+
+def lagrange_intrapolate(X,Y,x1):
+    N = len(X)
+    if N != len(Y):
+        print('data mismatch')
+        return None
+    sum = 0
+    for i in range(N):
+        prdct = 1
+        for k in range(N):
+            if k == i:
+                continue
+            prdct = prdct * ((x1 - X[k])/(X[i]-X[k]))
+        sum += prdct * Y[i]
+    return sum
+
+
+def px_deflate(px, root):
+    # here px is in the format a0,a1,a2,..an where n is the polynomial power.
+    n = len(px)
+    #Here, the passed 'root' is a verified root from main body with a certain tolerance, therefore checking not done.
+    if n == 1:
+        print('P(x) doesnt contain any x: deflation exited!')
+        return None
+    n -= 1
+    if px[n] != 1:
+        lead = px[n]
+        for i in range(len(px)):
+            px[i] = px[i] / lead
+    n -= 1
+    while n >= 0:
+        px[n] = (px[n+1] * root) + px[n]
+        n -= 1
+    return px[1:]
+
+
+
+def px_derivative(px):
+        # here px is in the format a0,a1,a2,..an where n is the polynomial power.
+
+    n = len(px)
+    i = 1
+    while i != n:
+        px[i] = px[i] * (i)
+        i += 1
+    return px[1:]
+
+def px_value(px,x):
+        # here px is in the format a0,a1,a2,..an where n is the polynomial power.
+
+    sum = 0
+    i = 0
+    n = len(px)
+    while i != n:
+        sum+= (px[i] * (x**i))
+        i += 1
+    return sum
+
+def root_laguire(px,guess,tolerance):
+        # here px is in the format a0,a1,a2,..an where n is the polynomial power.
+
+    roots = []
+    steps = 1
+    N = len(px) - 1
+    n = N
+    while steps <= N:
+        if abs(px_value(px,guess)) < tolerance:
+            print('{}th root, {:.4f}, is found in 0 steps.'.format(steps,guess))
+            steps += 1
+            roots.append(guess)
+            px = px_deflate(px,guess)
+            n -= 1
+            continue
+        # print('Finding the {}th root for {}'.format(steps,px))
+        dpx = px_derivative(px[:])
+        ddpx = px_derivative(dpx[:])
+        i = 1
+        theguess = guess
+        while True:
+            g = px_value(dpx,theguess)/px_value(px,theguess)
+            h = (g**2) - (px_value(ddpx,theguess)/px_value(px,theguess))
+            if g < 0:
+                a = (n / (g - m.sqrt((n-1)*((n*h)-(g**2)))))
+            else:
+                a = (n / (g + m.sqrt((n-1)*((n*h)-(g**2)))))
+            # print('a is',a)
+            newguess = theguess - a
+            # print(px_value(px,theguess),'and',px_value(px, newguess))
+            
+            if i < 26 :
+                # if abs(a) < tolerance and px_value(px,newguess) < tolerance:
+                if px_value(px,newguess) < tolerance:
+                    print('{}th root, {:.4f}, is found in {} steps.'.format(steps,newguess,i))
+                    steps += 1
+                    roots.append(newguess)
+                    px = px_deflate(px,newguess)
+                    n -= 1
+                    break
+                # else:
+                #     print('Guess discarded.\n')
+
+            else:
+                print('The guess for {} th root was not found in 25 steps'.format(steps))
+                return None
+            theguess = newguess
+            i += 1
+    return roots
+
+def fit_polyleastsq(dataX,dataY,order,datasigma=None):
+
+
+    n = len(dataX) #no. of datasets
+
+    if len(dataY) != n:
+        print("Data mismatch! exited!")
+        return None
+
+    matX = [[0]*(order+1) for i in range(order+1)]
+
+    #completing matX
+    matX[0][0] = n
+    for i in range(1,(2 * order) + 1):
+        sum = 0
+        for j in range(n):
+            sum += (dataX[j]**i)
+        if i <= order:
+            startX = 0
+            startY = i
+            while startY >= 0:
+                # print('p',startX,startY)
+
+                matX[startX][startY] = sum
+                startY -= 1
+                startX += 1
+        else:
+            
+            startX = i - order
+            startY = order
+            while startX <= order:
+                # print('p',startX,startY)
+                matX[startX][startY] = sum
+                startY -= 1
+                startX += 1
+
+    matY = []
+    sum = 0
+    for i in range(n):
+        sum += dataY[i]
+    matY.append([sum])
+    for i in range(1,order+1):
+        sum = 0
+        for j in range(n):
+            sum += (dataX[j]**i)*dataY[j]
+        matY.append([sum])
+
+    # print(matX,matY)
+    px = solve_GJ(matX,matY)
+    for j in range(len(px)):
+        px[j] = px[j][0]
+
+    return px
+
+def fit_linearleastsq(dataX,dataY,datasigma=None):
+    #returns the linear equation in polynomial form where the line is a0+a1x
+
+    n = len(dataX) #no. of datasets
+
+    if len(dataY) != n:
+        print("Data mismatch! exited!")
+        return None
+    Sxx = 0
+    Syy = 0 #for pearson R square calc.
+    Sxy = 0
+    Sx = 0
+    Sy = 0
+
+    if datasigma is None:
+        S = n
+        for i in range(n):
+            Sxx += dataX[i]**2
+            Syy += dataY[i]**2
+            Sxy += dataX[i] * dataY[i]
+            Sx += dataX[i]
+            Sy += dataY[i]
+
+    else:
+        S = 0
+        for i in range(n):
+            S += 1/(datasigma[i]**2)
+            Sxx += (dataX[i]**2)/(datasigma[i]**2)
+            Syy += (dataY[i]**2)/(datasigma[i]**2)
+            Sxy += (dataX[i] * dataY[i])/(datasigma[i]**2)
+            Sx += dataX[i]/(datasigma[i]**2)
+            Sy += dataY[i]/(datasigma[i]**2)
+
+    delta = (S*Sxx)-(Sx**2)
+    a0 = ((Sxx*Sy) - (Sx*Sxy)) / delta
+    a1 = ((Sxy*S) - (Sx*Sy)) / delta
+
+    R2 = (((n*Sxy) - (Sx*Sy))**2)/(((n*Sxx)-(Sx**2)) * ((n*Syy)-(Sy**2)))
+
+    return [a0,a1],R2
+
+
+def px_graphdata(px,start,stop,number):
+    step = (stop - start) / (number - 1)
+    Xvalues = []
+    Yvalues = []
+    stop += step
+    while start < stop:
+        Xvalues.append(start)
+        Yvalues.append(px_value(px,start))
+        start += step
+    return Xvalues, Yvalues
+
+def integrate_midpoint(f,a,b,N):
+    #integrates f over a to b by dividing to N parts
+
+    step = (b - a) / N
+    x = a + (step / 2)
+    sum = 0
+    while x < b:
+        # print('x = ',x,'fx =',f(x))
+        sum += (f(x))
+        x += step
+    sum *= step
+    return sum
+            
+def integrate_trapezoidal(f,a,b,N):
+    step = (b-a)/N
+    sum = (f(a)+f(b))/2
+    b -= (step/2)
+    a += step
+    while a < b:
+        sum += f(a)
+        a += step
+    sum *= step
+    return sum
+
+def integrate_simpson(f,a,b,N):
+    h = (b-a)/N
+    step = h/2
+    sum = f(a)+f(b)+(4*f(a+(step)))
+    b -= step
+    a += h
+    while a < b:
+        sum += ((2*f(a)) + (4*f(a + step)))
+        a += h
+    sum = (h/3)
+    return sum
+
+def fit_powerlaw(dataX,dataY):
+    # fits the data given by dataX and dataY using (a*x^b) model
+    # returns a,b and pearsons R square
+    
+    n = len(dataX) #no. of datasets
+
+    #checking the data mismatch
+    if len(dataY) != n:
+        print("Data mismatch! exited!")
+        return None
+
+    #convering to linear form data
+    logxdata = []
+    logydata = []
+    for i in range(n):
+        logxdata.append(m.log(dataX[i]))
+        logydata.append(m.log(dataY[i]))
+    
+    
+        #using least square fit for linear form
+    px,prs = fit_linearleastsq(logxdata,logydata)
+
+    #calculating the a and b from the linear polynomial solution
+    a = m.exp(px[0])
+    b = px[1]
+
+    return a,b,prs
+
+def fit_exponential(dataX,dataY):
+    # fits the data given by dataX and dataY using (a*e^bx) model
+    # returns a,b and pearsons R square
+
+    n = len(dataX) #no. of datasets
+
+    #checking data mismatch
+    if len(dataY) != n:
+        print("Data mismatch! exited!")
+        return None
+
+    #convering to linear form
+    logydata = []
+    for i in range(n):
+        logydata.append(m.log(dataY[i]))
+    
+    #using least square fit for linear form
+    px,prs = fit_linearleastsq(dataX,logydata) #prs is pearson r square
+
+    #calculating the a and b from the linear polynomial solution
+    a = m.exp(px[0])
+    b = px[1]
+
+    return a,b,prs
+
+def powerlaw_data(a,b,start,stop,number):
+    # gives the graph data for y = a*x^b between start and stop with "number" no. of points
+    step = (stop - start) / (number - 1)
+    Xvalues = []
+    Yvalues = []
+    stop += step
+    while start < stop:
+        Xvalues.append(start)
+        Yvalues.append(a*(start**b))
+        start += step
+    return Xvalues, Yvalues
+
+
+def exp_graphdata(a,b,start,stop,number):
+    # gives the graph data for y = a*e^bx between start and stop with "number" no. of points
+    step = (stop - start) / (number - 1)
+    Xvalues = []
+    Yvalues = []
+    stop += step
+    while start < stop:
+        Xvalues.append(start)
+        Yvalues.append(a*(m.exp(start*b)))
+        start += step
+    return Xvalues, Yvalues
+
+
+            

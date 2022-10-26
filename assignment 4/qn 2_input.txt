@@ -1,0 +1,17 @@
+# inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.
+#PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.
+
+#   guess
+int guess
+-1
+#   interval start
+int a
+-1
+#   interval stop
+int b
+0
+#   interval stop
+float tolerance
+0.000001
+# EndOfInput
+EOF

@@ -1,0 +1,11 @@
+# inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.
+#PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.
+
+#   polynomial px in a0 + a1x^2 +... list format
+float_list px
+4 0 -5 0 1
+#   common tolerance value 
+float tolerance
+0.000001
+# EndOfInput
+EOF
