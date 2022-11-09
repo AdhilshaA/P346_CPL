@@ -28,12 +28,13 @@ list1 = lib.root_bisection(f,a,b,tolerance,tolerance,details = True)
 list2 = lib.root_regulafalsi(f,a,b,tolerance,tolerance,details = True)
 list3 = lib.root_newtonraphson(f,df,guess,tolerance,tolerance,details = True)
 
+#own function for printing tables like this
 lib.print_coltable({'iteration':[i+1 for i in range(max(len(list1),len(list2),len(list3)))],'bisection method':list1,'Regula Falsi method':list2,'newton raphson method':list3})
 
 print('We used the interval {} and guess {} for the methods'.format((a,b),guess))
 print('Using Bisection method, we arrived at root x = {} within {} steps'.format(list1[-1],len(list1)))
 print('Using Regula Falsi method, we arrived at root x = {} within {} steps'.format(list2[-1],len(list2)))
-print('Using Newton Rpahson method, we arrived at root x = {} within {} steps'.format(list3[-1],len(list3)))
+print('Using Newton Rpah son method, we arrived at root x = {} within {} steps'.format(list3[-1],len(list3)))
 
 ######-----  OUTPUT  -----######
 '''

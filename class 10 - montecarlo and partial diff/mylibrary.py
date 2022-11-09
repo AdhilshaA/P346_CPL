@@ -123,6 +123,66 @@ def print_mat2(A):
         print(' ]')
     print('')  
 
+def print_coltable(data):
+    # prints tables with heading as keys and columns as values from the dictionary data given
+    # first column is formatted as for serial number way
+    # all data is assumed to be numbers (floats to be specific, except from the first col, which is int)
+
+    cols = len(data)
+    key = list(data.keys())
+    rows = 0
+    for k in key:
+        if len(data[k]) > rows:
+            rows = len(data[k])
+    maxchar = []
+    for k in key:
+        max = len(k)
+        for value in data[k]:
+            if int(value)//1 == 0 and value < 0 and max < 8:
+                max = 8
+                continue
+            if (len(str(int(value)))+7) > max:
+                max = len(str(int(value)))
+        maxchar.append(max + 4)
+    line = '|'.join(['-' * spaces for spaces in maxchar])
+    line = ''.join(['|',line,'|'])
+    i = 0
+    print(line)
+    print('|',end='',sep ='')
+    for k in key:
+        max = maxchar[i]
+        spaces = (max - len(k))
+        start =  spaces // 2
+        stop = spaces = start
+        print(' '*start,k,' '*stop,'|',end = '',sep='')
+        i += 1
+    print('')
+    print(line)
+    for i in range(rows):
+        print('|',end='',sep='')
+        spaces = maxchar[0] - len(str(data[key[0]][i]))
+        start = (spaces) // 2
+        stop = spaces - (start)
+        print(' '*start,data[key[0]][i],' '*stop,'|',end = '',sep='')
+                
+        for j in range(1,cols):
+            try: spaces = maxchar[j] - (len(str(int(data[key[j]][i]))) + 7)
+            except:
+                start = maxchar[j] // 2
+                stop = maxchar[j] - (start + 1)
+                print(' '*start,'-',' '*stop,'|',end = '',sep='')
+                continue
+            if int(data[key[j]][i])//1 == 0 and value < 0:
+                spaces -= 1
+            start = spaces // 2
+            stop = spaces - start
+            print(' '*start,end='',sep = '')
+            print('{:f}'.format(data[key[j]][i]),end='',sep = '')
+            print(' '*stop,'|',end='',sep = '')
+        print('')   
+    print(line)
+
+
 def mat_dot(A,B):
     #returns the dot product of two column matrices
     if len(A) != len(B) or len(A[0]) != 1 or len(B[0]) != 1: #works only if column matrice sof same length
@@ -275,25 +335,24 @@ def parse(file_name):
             return inputs
 
 class randgen():
-    def __init__(self,seed, a = 1103515245, c = 12345 ,m = 32768, interval=(0,1)):
+    def __init__(self,seed, a = 1103515245, c = 12345 ,m = 32768):
         #initiation of data input
         self.term = seed
         self.a = a
         self.c = c
         self.m = m
-        self.interval = interval
 
     def gen(self):
-        #generates a random number in the interval (0,1)
+        #generates a random number in the range (0,1)
         self.term = (((self.a * self.term) + self.c) % self.m)
-        return (self.interval[0] + (self.term * ((self.interval[1]-self.interval[0])/ self.m)))
+        return self.term / self.m
 
     def genlist(self,length):
-        # returns a list of 'n' random numbers in the interval (0,1) where 'n' is 'length'.
+        # returns a list of 'n' random numbers in the range (0,1) where 'n' is 'length'.
         RNs = []
         for i in range(length):
             self.term = (((self.a * self.term) + self.c) % self.m)
-            RNs.append(self.interval[0] + (self.term * ((self.interval[1]-self.interval[0]) / self.m)))
+            RNs.append(self.term / self.m)
         return RNs
 
 def Randomwalk2D_sim(seed,steps,start = (0,0)):
@@ -774,25 +833,26 @@ def solve_Jacobi(A,B,tolerance):
     return None, steps
 
 def root_bracketing(f,a,b):
+
+    #makes the interval 1.5 times bigger and shifts to closer to zero side for 12 times
     for i in range(12):
         if f(a) * f(b) < 0:
             return a,b
         if abs(f(a)) < abs(f(b)):
-            # print("left")
             temp = a
             a = a - (1.5*(b-a))
             b = temp
-            # print('a={},b={}'.format(a,b))
         else:
-            # print("right")
             temp = b
             b = b + (1.5*(b-a))
             a = temp
-            # print('a={},b={}'.format(a,b))
+
+    #after 12 times, if not bracketed, the process restarts with 2.5 times bigger including the current interval
     if abs(f(a)) < abs(f(b)):
         return root_bracketing(a - (1.5*(b-a)),b)
     else:
         return root_bracketing(a,b + 1.5*(abs(b-a)))
+
 
 def root_bisection(f,a,b,epsilon,delta,details = False):
 
@@ -845,7 +905,7 @@ def root_newtonraphson(f,df,x0,epsilon,delta,details = False):
             tables.append(x1)
             #checking is guess is good enough
             if abs(x1 - x0) < epsilon and f(x1) < delta:
-                return x1,steps
+                return tables
 
             #preparing for next iteration
             x0 = x1
@@ -921,6 +981,7 @@ def root_regulafalsi(f,a,b,epsilon,delta,details = False):
             steps += 1
         print('Not converging after 100 steps, terminated')
         return None,None
+
 
 
 def lagrange_intrapolate(X,Y,x1):
@@ -1127,6 +1188,8 @@ def fit_linearleastsq(dataX,dataY,datasigma=None):
 
 
 def px_graphdata(px,start,stop,number):
+    # px in the format [x0,x1,x2...]
+    
     step = (stop - start) / (number - 1)
     Xvalues = []
     Yvalues = []
@@ -1143,7 +1206,7 @@ def integrate_midpoint(f,a,b,N):
     step = (b - a) / N
     x = a + (step / 2)
     sum = 0
-    for i in range(N):
+    while x < b:
         # print('x = ',x,'fx =',f(x))
         sum += (f(x))
         x += step
@@ -1153,8 +1216,9 @@ def integrate_midpoint(f,a,b,N):
 def integrate_trapezoidal(f,a,b,N):
     step = (b-a)/N
     sum = (f(a)+f(b))/2
+    b -= (step/2)
     a += step
-    for i in range(N-1):
+    while a < b:
         sum += f(a)
         a += step
     sum *= step
@@ -1162,10 +1226,12 @@ def integrate_trapezoidal(f,a,b,N):
 
 def integrate_simpson(f,a,b,N):
     h = (b-a)/N
-    sum = f(a)+f(b)+(4*f(a+(h/2)))
+    step = h/2
+    sum = f(a)+f(b)+(4*f(a+(step)))
+    b -= step
     a += h
-    for i in range(N-1):
-        sum += ((2*f(a)) + (4*f(a + (h/2))))
+    while a < b:
+        sum += ((2*f(a)) + (4*f(a + step)))
         a += h
     sum = (h/3)
     return sum
@@ -1248,5 +1314,80 @@ def exp_graphdata(a,b,start,stop,number):
         start += step
     return Xvalues, Yvalues
 
+def fx_graphdata(f,a,b,number):
+    step = (b-a)/number
+    datX = []
+    datY = []
+    for i in range(number+1):
+        datX.append(a)
+        datY.append(f(a))
+        a += step
+    return datX,datY
 
-            
+def diff_eulerforward(dydx,x0,y0,x1,dx):
+    # integrates and give data points between x0 and x1 for the solution of a given dydx
+    # x0 y0 is the given intial solution, dx is the delta X  used in each iteration 
+
+    x0
+    datX = [x0]
+    datY = [y0]
+    while x0 < x1:
+        y0 = y0 + dx*(dydx(y0,x0))
+        x0 += dx
+        datX.append(x0)
+        datY.append(y0)
+
+    return datX, datY
+
+def diff_predictorcorrector(dydx,x0,y0,x1,dx):
+    # integrates and give data points between x0 and x1 for the solution of a given dydx
+    # x0 y0 is the given intial solution, step is the delta X  used in each iteration 
+
+    start = x0
+    datX = [x0]
+    datY = [y0]
+
+    while x0 < x1:
+        k1 = dx*dydx(y0, x0)
+        k2 = dx*dydx(y0 + k1, x0 + dx)
+
+        y0 = y0 + (k1+k2)/2
+        x0 = x0 + dx
+        datX.append(x0)
+        datY.append(y0)
+
+    return datX, datY
+
+def diff_RK2(dydx,x0,y0,x1,dx):
+    # integrates and give data points between x0 and x1 for the solution of a given dydx
+    # x0 y0 is the given intial solution, step is the delta X  used in each iteration 
+
+    datX = [x0]
+    datY = [y0]
+    while x0 < x1:
+        k1 = dx * dydx(y0,x0)
+        k2 = dx * dydx((y0 + (k1/2)),(x0 + (dx/2)))
+        y0 = y0 + k2
+        x0 += dx
+        datX.append(x0)
+        datY.append(y0)
+        
+    return datX, datY
+
+def diff_RK4(dydx,x0,y0,x1,dx):
+    # integrates and give data points between x0 and x1 for the solution of a given dydx
+    # x0 y0 is the given intial solution, step is the delta X  used in each iteration 
+
+    datX = [x0]
+    datY = [y0]
+    while x0 < x1:
+        k1 = dx * dydx(y0,x0)
+        k2 = dx * dydx((y0 + (k1/2)),(x0 + (dx/2)))
+        k3 = dx * dydx((y0 + (k2/2)),(x0 + (dx/2)))
+        k4 = dx * dydx((y0 + k3),(x0 + dx))
+        y0 = y0 + ((k1 + k4 + (2*(k2 + k3)))/6)
+        x0 += dx
+        datX.append(x0)
+        datY.append(y0)
+        
+    return datX, datY

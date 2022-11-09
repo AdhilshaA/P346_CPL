@@ -76,6 +76,37 @@ bracketing should be done one time only?
 
 bisection, which root to consider
 
+# reports
+title, name roll, course
+
+intro
+--
+problem explain
+why important
+which method explain
+
+discuss the problem
+arrive at couple of eqns to perform
+how to implement
+---any packages used and why
+give pseudocode if not self explanatory (diff. font)
+---form the code type equations
+
+which computer you implement in.
+what parameters(?) you used and results in tabular (10-12 lines) or/and plots (axes labelled, scale(?), colored line and say if it doesnt mean anything factual, if its scatter plot).
+interpret your data correctly.
+
+references
+
+total should not exceed 4 pages
+
+# codes
+
+input files
+codes
+library (if any)
+
+
 
 
 

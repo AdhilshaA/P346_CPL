@@ -45,6 +45,40 @@ def sum_gp(start,cr,n):
         term = term * cr
     return sum
 
+class mat:
+    
+    def __check(x):
+        if type(x) != mat:
+            return False
+
+    def __init__(self,A):
+        if type(A) != list:
+            print('Not a matrix !')
+            return
+        n = len(A[0])
+        flag = 1
+        for i in range(1,len(A)):
+            if type(A[i]) != list or n != len(A[i]):
+                flag = 0
+                print('Not a matrix !')
+                return
+        if flag == 1:
+            self.data = A
+
+    def __add__(self,B):
+        if self.__check(B) == False:
+            print ('B is not a matrix !')
+            return None
+
+        sum = mat([[]])
+        sum.data = []
+        for i in range(len(self.data)):
+            sum.data.append([])
+            for j in range(len(self.data[0])):
+                sum.data[i].append(self.data[i][j] + B.data[i][j])
+        return sum
+
+
 def mat_mult(A,B): 
     #finding AB matrix
 
@@ -67,6 +101,20 @@ def mat_mult(A,B):
                 sum[row][col]=temp_sum
 
     return sum
+
+def mat_scalar(A,k):
+    for i in range(len(A)):
+        for j in range(len(A[0])):
+            A[i][j] = A[i][j]*k
+    return A
+
+def mat_add(A,B):
+    if len(A) != len(B) or len(A[0]) == len(A[0]):
+        return None
+    for i in range(len(A)):
+        for j in range(len(A[0])):
+            A[i][j]= A[i][j] + B[i][j]
+    return A
 
 def print_mat(A):
     #printing a given matrix A
@@ -143,7 +191,7 @@ def print_coltable(data):
                 continue
             if (len(str(int(value)))+7) > max:
                 max = len(str(int(value)))
-        maxchar.append(max + 4)
+        maxchar.append(max + 2)
     line = '|'.join(['-' * spaces for spaces in maxchar])
     line = ''.join(['|',line,'|'])
     i = 0
@@ -1188,6 +1236,8 @@ def fit_linearleastsq(dataX,dataY,datasigma=None):
 
 
 def px_graphdata(px,start,stop,number):
+    # px in the format [x0,x1,x2...]
+    
     step = (stop - start) / (number - 1)
     Xvalues = []
     Yvalues = []
@@ -1199,19 +1249,20 @@ def px_graphdata(px,start,stop,number):
     return Xvalues, Yvalues
 
 def integrate_midpoint(f,a,b,N):
-    #integrates f over a to b by dividing to N parts
+    # integrates f over a to b by dividing to N parts
 
     step = (b - a) / N
-    x = a + (step / 2)
+    x = a + (step / 2) #reaching middle of a section and jumping steps
     sum = 0
     while x < b:
-        # print('x = ',x,'fx =',f(x))
         sum += (f(x))
         x += step
     sum *= step
     return sum
             
 def integrate_trapezoidal(f,a,b,N):
+    #integrates f over a to b by dividing to N parts
+    
     step = (b-a)/N
     sum = (f(a)+f(b))/2
     b -= (step/2)
@@ -1312,5 +1363,131 @@ def exp_graphdata(a,b,start,stop,number):
         start += step
     return Xvalues, Yvalues
 
+def fx_graphdata(f,a,b,number):
+    step = (b-a)/number
+    datX = []
+    datY = []
+    for i in range(number+1):
+        datX.append(a)
+        datY.append(f(a))
+        a += step
+    return datX,datY
 
+def diff_eulerforward(dydx,x0,y0,x1,dx):
+    # integrates and give data points between x0 and x1 for the solution of a given dydx
+    # x0 y0 is the given intial solution, dx is the delta X  used in each iteration 
+
+    x0
+    datX = [x0]
+    datY = [y0]
+    while x0 < x1:
+        y0 = y0 + dx*(dydx(y0,x0))
+        x0 += dx
+        datX.append(x0)
+        datY.append(y0)
+
+    return datX, datY
+
+def diff_predictorcorrector(dydx,x0,y0,x1,dx):
+    # integrates and give data points between x0 and x1 for the solution of a given dydx
+    # x0 y0 is the given intial solution, step is the delta X  used in each iteration 
+
+    start = x0
+    datX = [x0]
+    datY = [y0]
+
+    while x0 < x1:
+        k1 = dx*dydx(y0, x0)
+        k2 = dx*dydx(y0 + k1, x0 + dx)
+
+        y0 = y0 + (k1+k2)/2
+        x0 = x0 + dx
+        datX.append(x0)
+        datY.append(y0)
+
+    return datX, datY
+
+def diff_RK2(dydx,x0,y0,x1,dx):
+    # integrates and give data points between x0 and x1 for the solution of a given dydx
+    # x0 y0 is the given intial solution, step is the delta X  used in each iteration 
+
+    datX = [x0]
+    datY = [y0]
+    while x0 < x1:
+        k1 = dx * dydx(y0,x0)
+        k2 = dx * dydx((y0 + (k1/2)),(x0 + (dx/2)))
+        y0 = y0 + k2
+        x0 += dx
+        datX.append(x0)
+        datY.append(y0)
+        
+    return datX, datY
+
+def diff_RK4(dydx,x0,y0,x1,dx):
+    # integrates and give data points between x0 and x1 for the solution of a given dydx
+    # x0 y0 is the given intial solution, step is the delta X  used in each iteration 
+
+    datX = [x0]
+    datY = [y0]
+    while x0 < x1:
+        k1 = dx * dydx(y0,x0)
+        k2 = dx * dydx((y0 + (k1/2)),(x0 + (dx/2)))
+        k3 = dx * dydx((y0 + (k2/2)),(x0 + (dx/2)))
+        k4 = dx * dydx((y0 + k3),(x0 + dx))
+        y0 = y0 + ((k1 + k4 + (2*(k2 + k3)))/6)
+        x0 += dx
+        datX.append(x0)
+        datY.append(y0)
+        
+    
+    return datX, datY
+
+
+def RK4_coupled(dydxlist,x0,y0list,x1,dx):
+
+    if len(dydxlist) != len(y0list):
+        return None
+    x1 -= dx/2
+    n = len(y0list)
+    k1 = [0]*n
+    k2 = [0]*n
+    k3 = [0]*n
+    k4 = [0]*n
+    tempy0list = [0]*n
+
+    datY = []
+    for i in range(n):
+        datY.append([y0list[i]])
+    datX = [x0]
+
+    while x0 < x1:
+        for i in range(n):
+            k1[i] = dx*dydxlist[i](y0list,x0)
+        
+        for i in range(n):
+            tempy0list[i] = y0list[i] + (k1[i] / 2)
+        for i in range(n):
+            k2[i] = dx*dydxlist[i](tempy0list, (x0 + (dx/2)))
+
+        for i in range(n):
+            tempy0list[i] = y0list[i] + (k2[i] / 2)
+        for i in range(n):
+            k3[i] = dx*dydxlist[i](tempy0list, (x0 + (dx/2)))
             
+        for i in range(n):
+            tempy0list[i] = y0list[i] + k3[i]
+        for i in range(n):
+            k4[i] = dx*dydxlist[i](tempy0list, (x0 + dx))
+        # print(k1,k2,k3,k4,'\n\n')
+
+        for i in range(n):
+            y0list[i] += ((k1[i] + (2 * k2[i]) + (2 * k3[i]) + (k4[i])) / 6)
+        x0 += dx
+        
+        # print(y0list,x0,'\n\n')
+
+        for i in range(n):
+            datY[i].append(y0list[i])
+        datX.append(x0)
+    # print(datX,datY)
+    return datX, datY
