@@ -192,6 +192,7 @@ def print_coltable(data):
             if (len(str(int(value)))+7) > max:
                 max = len(str(int(value)))
         maxchar.append(max + 2)
+    # print(maxchar)
     line = '|'.join(['-' * spaces for spaces in maxchar])
     line = ''.join(['|',line,'|'])
     i = 0
@@ -201,7 +202,8 @@ def print_coltable(data):
         max = maxchar[i]
         spaces = (max - len(k))
         start =  spaces // 2
-        stop = spaces = start
+        stop = spaces - start
+        # if k == 'N': print('spaces',max,len(k),max - len(k),spaces)
         print(' '*start,k,' '*stop,'|',end = '',sep='')
         i += 1
     print('')
@@ -383,24 +385,30 @@ def parse(file_name):
             return inputs
 
 class randgen():
-    def __init__(self,seed, a = 1103515245, c = 12345 ,m = 32768):
+    def __init__(self,seed, a = 1103515245, c = 12345 ,m = 32768,interval = (0,1)):
         #initiation of data input
         self.term = seed
         self.a = a
         self.c = c
         self.m = m
+        if interval[0] > interval[1]:
+            self.interval = (interval[1],interval[0])
+        elif interval[0] == interval[1]:
+            print('Invalid interval for LCG')
+        else:
+            self.interval = interval
 
     def gen(self):
         #generates a random number in the range (0,1)
         self.term = (((self.a * self.term) + self.c) % self.m)
-        return self.term / self.m
+        return (((self.interval[1]-self.interval[0])*(self.term / self.m)) + self.interval[0])
 
     def genlist(self,length):
         # returns a list of 'n' random numbers in the range (0,1) where 'n' is 'length'.
         RNs = []
         for i in range(length):
             self.term = (((self.a * self.term) + self.c) % self.m)
-            RNs.append(self.term / self.m)
+            RNs.append(((self.interval[1]-self.interval[0])*(self.term / self.m)) + self.interval[0])
         return RNs
 
 def Randomwalk2D_sim(seed,steps,start = (0,0)):
@@ -1282,8 +1290,16 @@ def integrate_simpson(f,a,b,N):
     while a < b:
         sum += ((2*f(a)) + (4*f(a + step)))
         a += h
-    sum = (h/3)
+    sum *= (step/3)
     return sum
+
+def integrate_montecarlo(f,a,b,N):
+
+    rand = randgen(seed = 1234,interval = (a,b))
+    sum = 0
+    for i in range(N):
+        sum += f(rand.gen())
+    return sum*((b-a)/N)
 
 def fit_powerlaw(dataX,dataY):
     # fits the data given by dataX and dataY using (a*x^b) model

@@ -15,7 +15,7 @@ def integrate_simpson(f,a,b,N):
     while a < b:
         sum += ((2*f(a)) + (4*f(a + step)))
         a += h
-    sum = (h/3)
+    sum *= (step/3)
     return sum
 
 def f1(x):

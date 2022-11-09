@@ -1,11 +1,14 @@
 # inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.
 #PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.
 
-#   n value for finding sum of first n odd numbers
-int n1
-5
-#   n value for finding n factorial
-int n2
-3
+#   the value a where the integral goes from a to b
+int a
+0
+#   the value b where the integral goes from a to b
+int b
+2
+#   number of main division for simpson integral method
+int N
+4
 # EndOfInput
 EOF
