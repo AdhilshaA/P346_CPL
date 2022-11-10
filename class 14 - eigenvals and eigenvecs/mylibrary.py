@@ -45,89 +45,6 @@ def sum_gp(start,cr,n):
         term = term * cr
     return sum
 
-class mat:
-    
-    def __check(x):
-        if type(x) != mat:
-            return False
-    
-    def __copy(A):
-        A1 = mat([[]])
-        A1.data = []
-        for i in range(len(A.data)):
-            A1.data.append(A.data[i][:]) #splicing done to avoid changes linking
-        return A1
-
-    def __init__(self,A):
-        if type(A) != list:
-            print('Not a matrix !')
-            return
-        n = len(A[0])
-        flag = 1
-        for i in range(1,len(A)):
-            if type(A[i]) != list or n != len(A[i]):
-                flag = 0
-                print('Not a matrix !')
-                return
-        if flag == 1:
-            self.data = A
-
-    def __add__(self,B):
-        if mat.__check(B) == False:
-            print ('matrix addition impossible !')
-            return None
-
-        sum = mat([[]])
-        sum.data = []
-        for i in range(len(self.data)):
-            sum.data.append([])
-            for j in range(len(self.data[0])):
-                sum.data[i].append(self.data[i][j] + B.data[i][j])
-        return sum
-
-    def __str__(self):
-        return str(self.data)
-
-    def table(self):
-        print_mat(self.data)
-
-    def __mul__(self,B):
-        if mat.__check(B) == False:
-            if type(B) != int and type(B) != float:
-                print ('cannot perform multiplication with matrix !')
-
-        
-        if type(B) == int or type(B) == float:
-            sol = mat.__copy(self)
-            for i in range(len(self.data)):
-                for j in range(len(self.data[0])):
-                    sol.data[i][j] *= B
-            return sol
-        else:
-            #finding AB matrix
-
-            #verifiying matrix multiplication is possible (cols of A ?= rows of B)
-            if len(self.data[0]) != len(B.data):
-                return None
-
-            #creating the sum matrix with zeroes
-            sum = mat([[]])
-            sum.data = []
-            for i in range(len(self.data)): #no. of row in sum is row of A
-                sum.data.append(list(0 for i in range( len(B.data[0]) ))) #no. of col in sum is col of B
-
-            #filling the sum matrix
-            for row in range(len(sum.data)):
-                for col in range(len(sum.data[0])):
-                    #finding each term in sum matrix
-                    temp_sum = 0
-                    for i in range(len(B.data)):
-                        temp_sum += self.data[row][i] * B.data[i][col]
-                        sum.data[row][col]=temp_sum
-
-            return sum 
-
-
 def mat_mult(A,B): 
     #finding AB matrix
 
@@ -222,15 +139,17 @@ def print_mat2(A):
 
 def print_coltable(data):
     # prints tables with heading as keys and columns as values from the dictionary data given
-    # first column is formatted as for serial number way
+    # first column is formatted as for serial number  (integers)
     # all data is assumed to be numbers (floats to be specific, except from the first col, which is int)
 
     cols = len(data)
     key = list(data.keys())
+
     rows = 0
     for k in key:
         if len(data[k]) > rows:
             rows = len(data[k])
+    
     maxchar = []
     for k in key:
         max = len(k)
@@ -240,7 +159,9 @@ def print_coltable(data):
                 continue
             if (len(str(int(value)))+7) > max:
                 max = len(str(int(value)))
-        maxchar.append(max + 4)
+        maxchar.append(max + 2)
+    # print(maxchar)
+
     line = '|'.join(['-' * spaces for spaces in maxchar])
     line = ''.join(['|',line,'|'])
     i = 0
@@ -250,11 +171,13 @@ def print_coltable(data):
         max = maxchar[i]
         spaces = (max - len(k))
         start =  spaces // 2
-        stop = spaces = start
+        stop = spaces - start
+        # if k == 'N': print('spaces',max,len(k),max - len(k),spaces)
         print(' '*start,k,' '*stop,'|',end = '',sep='')
         i += 1
     print('')
     print(line)
+
     for i in range(rows):
         print('|',end='',sep='')
         spaces = maxchar[0] - len(str(data[key[0]][i]))
@@ -307,6 +230,187 @@ def check_symmetry(A):
             if A[i][j] != A[j][i]: #symmetry condition False
                 return False
     return True 
+
+
+class mat:
+    
+    def __check(x):
+        if type(x) != mat:
+            return False
+
+    def copy(A):
+        A1 = mat([[]])
+        A1.data = []
+        for i in range(len(A.data)):
+            A1.data.append(A.data[i][:]) #splicing done to avoid changes linking
+        return A1
+
+    def __init__(self,A):
+        if type(A) != list:
+            print('Not a matrix !')
+            return
+        n = len(A[0])
+        flag = 1
+        for i in range(1,len(A)):
+            if type(A[i]) != list or n != len(A[i]):
+                flag = 0
+                print('Not a matrix !')
+                return
+        if flag == 1:
+            self.data = A
+
+    def __add__(self,B):
+        if mat.__check(B) == False:
+            print ('matrix addition impossible !')
+            return None
+
+        sum = mat([[]])
+        sum.data = []
+        for i in range(len(self.data)):
+            sum.data.append([])
+            for j in range(len(self.data[0])):
+                sum.data[i].append(self.data[i][j] + B.data[i][j])
+        return sum
+        
+    def __sub__(self,B):
+        if mat.__check(B) == False:
+            print ('matrix addition impossible !')
+            return None
+
+        sum = mat([[]])
+        sum.data = []
+        for i in range(len(self.data)):
+            sum.data.append([])
+            for j in range(len(self.data[0])):
+                sum.data[i].append(self.data[i][j] - B.data[i][j])
+        return sum
+
+    def __str__(self):
+        return str(self.data)
+
+    def table(self):
+        print_mat(self.data)
+
+    def __mul__(self,B):
+        if mat.__check(B) == False:
+            if type(B) != int and type(B) != float:
+                print ('cannot perform multiplication with matrix !')
+
+        
+        if type(B) == int or type(B) == float:
+            sol = mat.copy(self)
+            for i in range(len(self.data)):
+                for j in range(len(self.data[0])):
+                    sol.data[i][j] *= B
+            return sol
+        else:
+            #finding AB matrix
+
+            #verifiying matrix multiplication is possible (cols of A ?= rows of B)
+            if len(self.data[0]) != len(B.data):
+                return None
+
+            #creating the sum matrix with zeroes
+            sum = mat([[]])
+            sum.data = []
+            for i in range(len(self.data)): #no. of row in sum is row of A
+                sum.data.append(list(0 for i in range( len(B.data[0]) ))) #no. of col in sum is col of B
+
+            #filling the sum matrix
+            for row in range(len(sum.data)):
+                for col in range(len(sum.data[0])):
+                    #finding each term in sum matrix
+                    temp_sum = 0
+                    for i in range(len(B.data)):
+                        temp_sum += self.data[row][i] * B.data[i][col]
+                        sum.data[row][col]=temp_sum
+
+            return sum 
+
+    def dot(self,B):
+        #returns the dot product of two column matrices
+        if len(self.data) != len(B.data) or len(self.data[0]) != 1 or len(B.data[0]) != 1: #works only if column matrice sof same length
+            return None
+        dotprdct = 0
+        for row in range(len(self.data)):
+            dotprdct += (self.data[row][0] * B.data[row][0])
+        return dotprdct
+
+    def __iadd__(self,B):
+        if mat.__check(B) == False:
+            print ('matrix addition impossible !')
+            return None
+
+        for i in range(len(self.data)):
+            for j in range(len(self.data[0])):
+                self.data[i][j] += B.data[i][j]
+        return self
+        
+    def __isub__(self,B):
+        if mat.__check(B) == False:
+            print ('matrix addition impossible !')
+            return None
+
+        for i in range(len(self.data)):
+            for j in range(len(self.data[0])):
+                self.data[i][j] -= B.data[i][j]
+        return self
+
+    
+    def __imul__(self,B):
+        if mat.__check(B) == False:
+            if type(B) != int and type(B) != float:
+                print ('cannot perform multiplication with matrix !')
+
+        
+        if type(B) == int or type(B) == float:
+            for i in range(len(self.data)):
+                for j in range(len(self.data[0])):
+                    self.data[i][j] *= B
+            return self
+        else:
+            #finding AB matrix
+
+            #verifiying matrix multiplication is possible (cols of A ?= rows of B)
+            if len(self.data[0]) != len(B.data):
+                return None
+
+            #creating the sum matrix with zeroes
+            sum = mat([[]])
+            sum.data = []
+            for i in range(len(self.data)): #no. of row in sum is row of A
+                sum.data.append(list(0 for i in range( len(B.data[0]) ))) #no. of col in sum is col of B
+
+            #filling the sum matrix
+            for row in range(len(sum.data)):
+                for col in range(len(sum.data[0])):
+                    #finding each term in sum matrix
+                    temp_sum = 0
+                    for i in range(len(B.data)):
+                        temp_sum += self.data[row][i] * B.data[i][col]
+                        sum.data[row][col]=temp_sum
+            self = mat.copy(sum)
+            return self
+    
+    def __abs__(self):
+        #only for vectors!
+
+        sum = 0
+        for i in range(len(self.data)):
+            sum += self.data[i][0]**2
+        return m.sqrt(sum)
+
+    def check_symmetry(self):
+        #Function to check symmetry of A, return True or False
+        if len(self.data) != len(self.data[0]): #not square matix
+            return False
+
+        for i in range(len(self.data)):
+            for j in range(i + 1, len(self.data[0])): #checking only off-diagonal elements
+
+                if self.data[i][j] != self.data[j][i]: #symmetry condition False
+                    return False
+        return True 
 
 
 class myComplex:
@@ -432,24 +536,31 @@ def parse(file_name):
             return inputs
 
 class randgen():
-    def __init__(self,seed, a = 1103515245, c = 12345 ,m = 32768):
-        #initiation of data input
+    def __init__(self,seed, a = 1103515245, c = 12345 ,m = 32768,interval = (0,1)):
+        #initiation of data input, seed , other LCG parameters, and the interval in which you need the random numbers in.
+
         self.term = seed
         self.a = a
         self.c = c
         self.m = m
+        if interval[0] > interval[1]:
+            self.interval = (interval[1],interval[0])
+        elif interval[0] == interval[1]:
+            print('Invalid interval for LCG')
+        else:
+            self.interval = interval
 
     def gen(self):
         #generates a random number in the range (0,1)
         self.term = (((self.a * self.term) + self.c) % self.m)
-        return self.term / self.m
+        return (((self.interval[1]-self.interval[0])*(self.term / self.m)) + self.interval[0])
 
     def genlist(self,length):
         # returns a list of 'n' random numbers in the range (0,1) where 'n' is 'length'.
         RNs = []
         for i in range(length):
             self.term = (((self.a * self.term) + self.c) % self.m)
-            RNs.append(self.term / self.m)
+            RNs.append(((self.interval[1]-self.interval[0])*(self.term / self.m)) + self.interval[0])
         return RNs
 
 def Randomwalk2D_sim(seed,steps,start = (0,0)):
@@ -1298,22 +1409,27 @@ def px_graphdata(px,start,stop,number):
     return Xvalues, Yvalues
 
 def integrate_midpoint(f,a,b,N):
-    #integrates f over a to b by dividing to N parts
+    # integrates f over a to b by dividing to N parts in midpoint method
+    #getting the equation 'h * [ sum(f(x)) for all x ~ middle of subsections ] '
 
     step = (b - a) / N
-    x = a + (step / 2)
+    x = a + (step / 2) #reaching middle of a section and jumping steps
+    
     sum = 0
     while x < b:
-        # print('x = ',x,'fx =',f(x))
         sum += (f(x))
         x += step
     sum *= step
+
     return sum
             
 def integrate_trapezoidal(f,a,b,N):
+    #integrates f over a to b by dividing to N parts in trapezoidal method
+    #getting the equation 'h * [ (f(a)+f(b))/2 + ( sum(f(x)) for all x subsections ) ] '
+    
     step = (b-a)/N
     sum = (f(a)+f(b))/2
-    b -= (step/2)
+    b -= (step/2) #to ensure that even if rounding error accumulates in using the step multiple times, we stop before the last value
     a += step
     while a < b:
         sum += f(a)
@@ -1322,16 +1438,29 @@ def integrate_trapezoidal(f,a,b,N):
     return sum
 
 def integrate_simpson(f,a,b,N):
+    #integrates f over a to b by dividing to N parts in simpson method
+    #getting the equation '(step/3) * [ f(a) + f(b) + ( 4*sum(f(x)) for all x ~ middle of subsections ) + ( 2*sum(f(x)) for all x subsections ) ] '
+
     h = (b-a)/N
     step = h/2
     sum = f(a)+f(b)+(4*f(a+(step)))
-    b -= step
+    b -= step # for stopping before the last value if any rounding errors accumulate
     a += h
+
     while a < b:
         sum += ((2*f(a)) + (4*f(a + step)))
         a += h
-    sum = (h/3)
+    sum *= (step/3)
     return sum
+
+def integrate_montecarlo(f,a,b,N):
+    # does monte-carlo integration by taking N random numbers in the a to b interval and doing a sum over the function applied to those random numbers
+
+    rand = randgen(seed = 1234,interval = (a,b))
+    sum = 0
+    for i in range(N):
+        sum += f(rand.gen())
+    return sum*((b-a)/N)
 
 def fit_powerlaw(dataX,dataY):
     # fits the data given by dataX and dataY using (a*x^b) model
@@ -1372,7 +1501,7 @@ def fit_exponential(dataX,dataY):
         print("Data mismatch! exited!")
         return None
 
-    #convering to linear form
+    #converting to linear form
     logydata = []
     for i in range(n):
         logydata.append(m.log(dataY[i]))
@@ -1412,6 +1541,7 @@ def exp_graphdata(a,b,start,stop,number):
     return Xvalues, Yvalues
 
 def fx_graphdata(f,a,b,number):
+    # gives the graph data for f(x) from a to b and gives n number of sections.
     step = (b-a)/number
     datX = []
     datY = []
@@ -1490,6 +1620,7 @@ def diff_RK4(dydx,x0,y0,x1,dx):
     
     return datX, datY
 
+
 def RK4_coupled(dydxlist,x0,y0list,x1,dx):
 
     if len(dydxlist) != len(y0list):
@@ -1539,3 +1670,81 @@ def RK4_coupled(dydxlist,x0,y0list,x1,dx):
     # print(datX,datY)
     return datX, datY
 
+def diff_shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
+    
+    datX,datY = RK4_coupled([f1,f2],x0,[y0,dy0guess1],x1,step)
+    yval1 = datY[0][-1]
+    # print(yval1)
+    if abs(yval1 - y1) < tolerance:
+        return datX,datY
+    if yval1 < y1:
+        guess1side = -1
+    else :
+        guess1side = 1
+
+    dy0guess2 = dy0guess1 + 1   
+    datX,datY = RK4_coupled([f1,f2],x0,[y0,dy0guess2],x1,step)
+    yval2 = datY[0][-1]
+    # print(yval2)
+    if yval2 < y1:
+        guess2side = -1
+    else :
+        guess2side = 1
+
+    while guess1side * guess2side != -1:
+        if abs(y1-yval2) > abs(y1-yval1):
+            dy0guess2 = dy0guess1 - 1.5*abs(dy0guess2-dy0guess1)
+        else:
+            dy0guess2 += abs(dy0guess2-dy0guess1)
+        datX,datY = RK4_coupled([f1,f2],x0,[y0,dy0guess2],x1,step)
+        yval2 = datY[0][-1]
+        # print(yval2)
+        if yval2 < y1:
+            guess2side = -1
+        else :
+            guess2side = 1
+    if guess1side == 1:
+        dy0guess1,dy0guess2 = dy0guess2,dy0guess1
+    # print('guesses are {} and {} and yvals {} and {}'.format(dy0guess1,dy0guess2,yval1,yval2))
+
+    i = 0
+    while True:
+        newguess = dy0guess1 + (((dy0guess2 - dy0guess1)/(yval1 - yval2))*(y1 - yval2))
+        i += 1
+        datX,datY = RK4_coupled([f1,f2],x0,[y0,newguess],x1,step)
+        yvalnew = datY[0][-1]
+
+        # print('the guesses {} and {}, the new guess is {} and yvalue is {}'.format(dy0guess1, dy0guess2, newguess,yvalnew))
+        if abs(yvalnew - y1) < tolerance:
+            break
+        if yvalnew < y1:
+            dy0guess1 = newguess
+            yval1 = yvalnew
+        else:
+            dy0guess2 = newguess
+            yval2 = yvalnew
+
+    return datX, datY[0]
+
+def eigen_rayleigh(A,x0,tolerance):
+    Akx0 = (A*x0)
+    # Akx0.table()
+    # A.table()
+    # x0.table()
+    denom = (Akx0.dot(x0))
+    Akx0 = (A*Akx0)
+    num = (Akx0.dot(x0))
+    k = 1
+    lamk = num/denom
+    
+    while k<50:
+        denom = num
+        evec = Akx0.copy()
+        Akx0 = (A*Akx0)
+        num = (Akx0.dot(x0))
+        k += 1
+        lamk2 = num / denom
+        if abs(lamk - lamk2) < tolerance:
+            evec *= (1/abs(evec))
+            return lamk2,evec
+        lamk = lamk2

@@ -15,7 +15,7 @@ locals().update(lib.parse('assignment 5/qn3_input.txt'))  #getting those variabl
 # # For finding the centre of mass, we need to find 
 # ( integral(x*f(x)) on total length ) / ( integral(f(x)) on total length )
 # here f(x) is the mass denisty function
-# the numerator is the weighted function and denominator is the total mass of rod
+# the numerator is the mass density function wighted with positions and denominator is the total mass of rod
 
 def f(x):
     return (x**2)

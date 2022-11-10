@@ -21,10 +21,13 @@ data = {'N':[10,20,30]}
 data['Midpoint method']=[lib.integrate_midpoint(f,a,b,10),lib.integrate_midpoint(f,a,b,20),lib.integrate_midpoint(f,a,b,30)]
 data['Trapezoidal method']=[lib.integrate_trapezoidal(f,a,b,10),lib.integrate_trapezoidal(f,a,b,20),lib.integrate_trapezoidal(f,a,b,30)]
 data['Simpson method']=[lib.integrate_simpson(f,a,b,10),lib.integrate_simpson(f,a,b,20),lib.integrate_simpson(f,a,b,30)]
+
+print('The following table shows the results of the integration in question')
 lib.print_coltable(data) #function for printing tables
 
 ######-----  OUTPUT  -----######
 '''
+The following table shows the results of the integration in question
 |----|-----------------|--------------------|----------------|
 | N  | Midpoint method | Trapezoidal method | Simpson method |
 |----|-----------------|--------------------|----------------|

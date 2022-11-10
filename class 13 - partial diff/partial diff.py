@@ -2,48 +2,51 @@ import mylibrary as lib
 import math as m
 import matplotlib.pyplot as plt
 
-def g(x):
+def f0(x):
     return 20*abs(m.sin((m.pi)*x))
 
-hx = 2/20
-ht = 4/5000
-nt = 5000
-nx = 20
-alpha = ht/(hx**2)
-print(alpha)
-# alpha = 0.008
-V0 = [0]
-x = hx
-for i in range(nx):
-    V0.append(g(x))
-    x += hx
-# print(len(V0))
 
-X = [i*hx for i in range(nx+1)]
-plt.plot(X,V0)
+def partialdiff_heatdiffusion(f0,xi,xf,ti,tf,nx,nt,times = []):
 
-for i in range(1,1001):
-    V1 = [(alpha*V0[1] + ((1-(2*alpha))*V0[0]))]
-    for j in range(1,nx):
-        # print(i)
-        V1.append((alpha*(V0[j+1]+V0[j-1]) + ((1-(2*alpha))*V0[j])))
-    V1.append(alpha*V0[nx-1] + ((1-(2*alpha))*V0[nx]))
+    hx = (xf-xi)/nx
+    ht = (tf-ti)/nt
+    alpha = ht/(hx**2)
+    # print(alpha)
+    # alpha = 0.008
 
+    V0 = [f0(xi)]
+    X = [xi]
+    x = xi + hx
+    for i in range(nx):
+        X.append(x)
+        V0.append(f0(x))
+        x += hx
+    # print(len(V0))
+    # plt.plot(X,V0)
+    Vlist = [V0[:]]
 
-    # offset = V1[0] - V0[0]
-    # for j in range(nx+1):
-    #     V1[j] -= offset
+    for i in range(1,nt+1):
+        V1 = [(alpha*V0[1] + ((1-(2*alpha))*V0[0]))]
+        for j in range(1,nx):
+            V1.append((alpha*(V0[j+1]+V0[j-1]) + ((1-(2*alpha))*V0[j])))
+        V1.append(alpha*V0[nx-1] + ((1-(2*alpha))*V0[nx]))
 
-    
-    V0 = V1[:]
-    if i in [10,20,50,100,200,500,1000]:
-        plt.plot(X,V0)
-        
-        # wrong try ig
-        # V = []
+        # offset = V1[0] - V0[0]
         # for j in range(nx+1):
-        #     V.append(V1[j] - V1[0])
-        # plt.plot(X,V)
+        #     V1[j] -= offset
 
+        V0 = V1[:]
 
+        if i in times:
+            print('adding to')
+            Vlist.append(V0[:])
+            
+    if bool(times) is False:
+        return X,Vlist
+    return X,V0
+
+X,Y = partialdiff_heatdiffusion(f0,0,2,0,4,20,5000,times = [10,20,50,100,200,500,1000])
+print(Y)
+for i in range(len(Y)):
+    plt.plot(X,Y[i])
 plt.show()

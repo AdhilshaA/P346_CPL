@@ -4,10 +4,10 @@ import math as m
 
 #write interpolation
 
-def shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
+def diff_shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
     datX,datY = lib.RK4_coupled([f1,f2],x0,[y0,dy0guess1],x1,step)
     yval1 = datY[0][-1]
-    print(yval1)
+    # print(yval1)
     if abs(yval1 - y1) < tolerance:
         return datX,datY
     if yval1 < y1:
@@ -15,10 +15,10 @@ def shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
     else :
         guess1side = 1
 
-    dy0guess2 = dy0guess1 + 0.5   
+    dy0guess2 = dy0guess1 + 1   
     datX,datY = lib.RK4_coupled([f1,f2],x0,[y0,dy0guess2],x1,step)
     yval2 = datY[0][-1]
-    print(yval2)
+    # print(yval2)
     if yval2 < y1:
         guess2side = -1
     else :
@@ -31,19 +31,19 @@ def shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
             dy0guess2 += abs(dy0guess2-dy0guess1)
         datX,datY = lib.RK4_coupled([f1,f2],x0,[y0,dy0guess2],x1,step)
         yval2 = datY[0][-1]
-        print(yval2)
+        # print(yval2)
         if yval2 < y1:
             guess2side = -1
         else :
             guess2side = 1
-    print('guesses are {} and {} and yvals {} and {}'.format(dy0guess1,dy0guess2,yval1,yval2))
+    if guess1side == 1:
+        dy0guess1,dy0guess2 = dy0guess2,dy0guess1
+    # print('guesses are {} and {} and yvals {} and {}'.format(dy0guess1,dy0guess2,yval1,yval2))
 
-    # if guess1side * guess2side != -1:
-    #     pass
     i = 0
     while True:
         newguess = dy0guess1 + (((dy0guess2 - dy0guess1)/(yval1 - yval2))*(y1 - yval2))
-        i+=1
+        i += 1
         datX,datY = lib.RK4_coupled([f1,f2],x0,[y0,newguess],x1,step)
         yvalnew = datY[0][-1]
 
@@ -51,27 +51,13 @@ def shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
         if abs(yvalnew - y1) < tolerance:
             break
         if yvalnew < y1:
-            if guess1side == -1:
-                dy0guess1 = newguess
-                yval1 = yvalnew
-            else:
-                dy0guess2 = newguess
-                yval2 = yvalnew
+            dy0guess1 = newguess
+            yval1 = yvalnew
         else:
-            if guess1side == 1:
-                dy0guess1 = newguess
-                yval1 = yvalnew
-            else:
-                dy0guess2 = newguess
-                yval2 = yvalnew
-        
-    print('{} steps'.format(i))
-    plt.plot(datX,datY[0],'ro',ms=2)
-    yval1 = datY[0][-1]
-    print('final yval',yval1)
-    
+            dy0guess2 = newguess
+            yval2 = yvalnew
 
-    
+    return datX, datY[0]
 
 
 def f1(l,x):
@@ -103,7 +89,12 @@ step = 0.1
 def f(x):
     return ((0.157*m.exp((m.sqrt(2)*x))) + (1.043*m.exp((-1*m.sqrt(2)*x))))
 
-shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step)
+datX,datY = diff_shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step)
+
+plt.plot(datX,datY,'ro',ms=2)
+yval1 = datY[-1]
+# print('final yval',yval1)
+
 X,Y = f_data(f,0,1,100)
 plt.plot(X,Y)
 plt.show()

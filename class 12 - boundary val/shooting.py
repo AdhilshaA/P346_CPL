@@ -14,7 +14,7 @@ def shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
         guess1side = -1
     else :
         guess1side = 1
-    dy0guess2 = -1
+    dy0guess2 = dy0guess1 + 1
     datX,datY = lib.RK4_coupled([f1,f2],x0,[y0,dy0guess2],x1,step)
     dyval2 = datY[0][-1]
     print(dyval2)
