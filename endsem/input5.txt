@@ -1,0 +1,27 @@
+#------------inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.-------------------------#
+#----PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.--------#
+#---types can be: int, float, str, complex, int_list, float_list, str_list, int_mat, float_mat, str_mat, xydata (2 var), xysigdata (3 var)-----#
+
+#  a constant for the function
+float g
+10
+#  a constant for the function
+float gamma
+0.02
+#  initial velocity
+float v0
+10
+#  initial height
+float y0
+0
+#  initial time
+float t0
+0
+#  final time
+float tf
+2
+#  step size for time
+float dt
+0.1
+# EndOfInput
+EOF

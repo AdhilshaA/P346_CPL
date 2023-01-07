@@ -6,7 +6,6 @@ def diff_eulerforward(dydx,x0,y0,x1,dx):
     # integrates and give data points between x0 and x1 for the solution of a given dydx
     # x0 y0 is the given intial solution, dx is the delta X  used in each iteration 
 
-    x0
     datX = [x0]
     datY = [y0]
     while x0 < x1:

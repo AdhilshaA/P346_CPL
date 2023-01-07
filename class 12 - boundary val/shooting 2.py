@@ -4,8 +4,8 @@ import math as m
 
 #write interpolation
 
-def diff_shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
-    datX,datY = lib.RK4_coupled([f1,f2],x0,[y0,dy0guess1],x1,step)
+def diff_shooting(flist,x0,y0,x1,y1,dy0guess1,tolerance,step):
+    datX,datY = lib.RK4_coupled(flist,x0,[y0,dy0guess1],x1,step)
     yval1 = datY[0][-1]
     # print(yval1)
     if abs(yval1 - y1) < tolerance:
@@ -16,7 +16,7 @@ def diff_shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
         guess1side = 1
 
     dy0guess2 = dy0guess1 + 1   
-    datX,datY = lib.RK4_coupled([f1,f2],x0,[y0,dy0guess2],x1,step)
+    datX,datY = lib.RK4_coupled(flist,x0,[y0,dy0guess2],x1,step)
     yval2 = datY[0][-1]
     # print(yval2)
     if yval2 < y1:
@@ -29,7 +29,7 @@ def diff_shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
             dy0guess2 = dy0guess1 - 1.5*abs(dy0guess2-dy0guess1)
         else:
             dy0guess2 += abs(dy0guess2-dy0guess1)
-        datX,datY = lib.RK4_coupled([f1,f2],x0,[y0,dy0guess2],x1,step)
+        datX,datY = lib.RK4_coupled(flist,x0,[y0,dy0guess2],x1,step)
         yval2 = datY[0][-1]
         # print(yval2)
         if yval2 < y1:
@@ -44,7 +44,7 @@ def diff_shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
     while True:
         newguess = dy0guess1 + (((dy0guess2 - dy0guess1)/(yval1 - yval2))*(y1 - yval2))
         i += 1
-        datX,datY = lib.RK4_coupled([f1,f2],x0,[y0,newguess],x1,step)
+        datX,datY = lib.RK4_coupled(flist,x0,[y0,newguess],x1,step)
         yvalnew = datY[0][-1]
 
         # print('the guesses {} and {}, the new guess is {} and yvalue is {}'.format(dy0guess1, dy0guess2, newguess,yvalnew))
@@ -89,7 +89,7 @@ step = 0.1
 def f(x):
     return ((0.157*m.exp((m.sqrt(2)*x))) + (1.043*m.exp((-1*m.sqrt(2)*x))))
 
-datX,datY = diff_shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step)
+datX,datY = diff_shooting([f1,f2],x0,y0,x1,y1,dy0guess1,tolerance,step)
 
 plt.plot(datX,datY,'ro',ms=2)
 yval1 = datY[-1]

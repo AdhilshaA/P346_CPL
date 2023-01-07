@@ -1,0 +1,18 @@
+#------------inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.-------------------------#
+#----PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.--------#
+#---types can be: int, float, str, complex, int_list, float_list, str_list, int_mat, float_mat, str_mat, xydata (2 var), xysigdata (3 var)-----#
+
+#   initial no. of particles on left
+int Nleft
+5000
+#   time step size
+float step
+1
+#   final time
+float tf
+15000
+# seed for the LCG
+float seed1
+1234
+# EndOfInput
+EOF

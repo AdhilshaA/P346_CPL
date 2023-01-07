@@ -1,0 +1,18 @@
+#------------inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.-------------------------#
+#----PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.--------#
+#---types can be: int, float, str, complex, int_list, float_list, str_list, int_mat, float_mat, str_mat, xydata (2 var), xysigdata (3 var)-----#
+
+#   the constant F in the equation
+float F0
+2.5
+#   tolerance 1 for the function
+float epsilon
+0.01
+#    tolerance 1 for the function
+float delta
+0.01
+#   initial guess
+float x0
+1
+# EndOfInput
+EOF

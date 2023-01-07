@@ -1,6 +1,7 @@
 from tkinter.messagebox import YESNOCANCEL
 import mylibrary as lib
 import matplotlib.pyplot as plt
+import math as m
 
 def RK4_coupled(dydxlist,x0,y0list,x1,dx):
 
@@ -60,9 +61,21 @@ def f2(xvlist,t):
 
 dydx = [f1,f2]
 
+def dydx (y,x):
+    return (y[0] - (x**2) + 1)
 
-X,Y = RK4_coupled(dydx,0,[1,1],15,0.1)
-plt.plot(X,Y[0],X,Y[1],'-',ms=2)
+def y(x):
+    return ((x**2) + (2*x) + 1 + (-0.5*m.exp(x)))
+
+x1 = 4
+x0 = 0
+y0 = [0.5]
+X,Y = RK4_coupled([dydx],x0,y0,x1,0.1)
+X1,Y1 = lib.fx_graphdata(y,x0,x1,20)
+
+plt.plot(X1,Y1,'b-') 
+plt.plot(X,Y[0],'ro',ms=2)
+plt.vlines(X,min(Y[0]),max(Y[0]))
 plt.show()
 
 # print(Y,'n')

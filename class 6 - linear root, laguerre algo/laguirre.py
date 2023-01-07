@@ -15,8 +15,6 @@ def px_deflate(px, root):
         px[i] = (px[i-1] * root) + px[i]
     return px[:-1]
 
-
-
 def px_derivative(px):
     n = len(px) - 1
     i = 0
@@ -36,9 +34,6 @@ def px_value(px,x):
         i += 1
         n -= 1
     return sum
-
-
-
 
 def root_laguire(px,guess,tolerance):
     roots = []

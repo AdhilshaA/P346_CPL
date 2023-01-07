@@ -42,8 +42,8 @@ def partialdiff_heatdiffusion(f0,xi,xf,ti,tf,nx,nt,times = []):
             Vlist.append(V0[:])
             
     if bool(times) is False:
-        return X,Vlist
-    return X,V0
+        return X,V0
+    return X,Vlist
 
 X,Y = partialdiff_heatdiffusion(f0,0,2,0,4,20,5000,times = [10,20,50,100,200,500,1000])
 print(Y)

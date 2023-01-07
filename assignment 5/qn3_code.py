@@ -23,9 +23,14 @@ def xf(x):
     return (x**3)
 
 COM = (lib.integrate_simpson(xf,a,b,N)/lib.integrate_simpson(f,a,b,N))
-print("The centre of mass turned out to be at x = {}".format(COM))
 
+print("The centre of mass turned out to be at x = {:.4f}".format(COM))
+print("\n<----I have used simpson method and from N = 1 itself, it was giving exactly 1.5---->")
+print("<-Some other method like trapezoidal method gives a less accurate value like 1.5001->")
 ######-----  OUTPUT  -----######
 '''
-The centre of mass turned out to be at x = 1.5
+The centre of mass turned out to be at x = 1.5000
+
+<----I have used simpson method and from N = 1 itself, it was giving exactly 1.5---->
+<-Some other method like trapezoidal method gives a less accurate value like 1.5001->
 '''

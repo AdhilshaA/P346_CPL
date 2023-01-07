@@ -9,6 +9,6 @@ int b
 2
 #   number of main division for simpson integral method
 int N
-4
+1
 # EndOfInput
 EOF

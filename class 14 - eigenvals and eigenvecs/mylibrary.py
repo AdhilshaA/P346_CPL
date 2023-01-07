@@ -1412,6 +1412,13 @@ def integrate_midpoint(f,a,b,N):
     # integrates f over a to b by dividing to N parts in midpoint method
     #getting the equation 'h * [ sum(f(x)) for all x ~ middle of subsections ] '
 
+    if N < 1:
+        N = 10 #default value if N is not a viable value!
+        print("N not viable, took default value 10.")
+
+    if N % 1 != 0:
+        N = N // 1 #to get integer if it is not
+
     step = (b - a) / N
     x = a + (step / 2) #reaching middle of a section and jumping steps
     
@@ -1427,6 +1434,13 @@ def integrate_trapezoidal(f,a,b,N):
     #integrates f over a to b by dividing to N parts in trapezoidal method
     #getting the equation 'h * [ (f(a)+f(b))/2 + ( sum(f(x)) for all x subsections ) ] '
     
+    if N < 1:
+        N = 10 #default value if N is not a viable value!
+        print("N not viable, took default value 10.")
+
+    if N % 1 != 0:
+        N = N // 1 #to get integer if it is not
+
     step = (b-a)/N
     sum = (f(a)+f(b))/2
     b -= (step/2) #to ensure that even if rounding error accumulates in using the step multiple times, we stop before the last value
@@ -1440,6 +1454,13 @@ def integrate_trapezoidal(f,a,b,N):
 def integrate_simpson(f,a,b,N):
     #integrates f over a to b by dividing to N parts in simpson method
     #getting the equation '(step/3) * [ f(a) + f(b) + ( 4*sum(f(x)) for all x ~ middle of subsections ) + ( 2*sum(f(x)) for all x subsections ) ] '
+
+    if N < 1:
+        N = 5 #default value if N is not a viable value!
+        print("N not viable, took default value 5.")
+
+    if N % 1 != 0:
+        N = N // 1 #to get integer if it is not
 
     h = (b-a)/N
     step = h/2
@@ -1455,6 +1476,13 @@ def integrate_simpson(f,a,b,N):
 
 def integrate_montecarlo(f,a,b,N):
     # does monte-carlo integration by taking N random numbers in the a to b interval and doing a sum over the function applied to those random numbers
+
+    if N < 1:
+        N = 10 #default value if N is not a viable value!
+        print("N not viable, took default value 10.")
+
+    if N % 1 != 0:
+        N = N // 1 #to get integer if it is not.
 
     rand = randgen(seed = 1234,interval = (a,b))
     sum = 0
@@ -1693,9 +1721,9 @@ def diff_shooting(f1,f2,x0,y0,x1,y1,dy0guess1,tolerance,step):
 
     while guess1side * guess2side != -1:
         if abs(y1-yval2) > abs(y1-yval1):
-            dy0guess2 = dy0guess1 - 1.5*abs(dy0guess2-dy0guess1)
+            dy0guess2 = dy0guess1 - 1.5*(dy0guess2-dy0guess1)
         else:
-            dy0guess2 += abs(dy0guess2-dy0guess1)
+            dy0guess2 += 1.5*(dy0guess2-dy0guess1)
         datX,datY = RK4_coupled([f1,f2],x0,[y0,dy0guess2],x1,step)
         yval2 = datY[0][-1]
         # print(yval2)

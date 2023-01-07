@@ -1,0 +1,18 @@
+#------------inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.-------------------------#
+#----PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.--------#
+#---types can be: int, float, str, complex, int_list, float_list, str_list, int_mat, float_mat, str_mat, xydata (2 var), xysigdata (3 var)-----#
+
+#   a constant in equation
+float L
+1
+#   a constant in equation
+float g
+9.8
+#   N for simpson, I take N considering main interval btw x0 and x2 in my fn., therefore half
+int N
+5
+#   integral from xi to xf
+float xi
+0
+# EndOfInput
+EOF

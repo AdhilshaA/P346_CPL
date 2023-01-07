@@ -1,0 +1,33 @@
+#------------inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.-------------------------#
+#----PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.--------#
+#---types can be: int, float, str, complex, int_list, float_list, str_list, int_mat, float_mat, str_mat, xydata (2 var), xysigdata (3 var)-----#
+
+#   a constant in coupled ODE eqn
+float Ta
+20
+#   a constant in coupled ODE eqn
+float alpha
+0.01
+#   boundary x value 1
+float x0
+0
+#   corresponding y value 1
+float y0
+40
+#   boundary x value 2
+float x1
+10
+#   corresponding y value 2
+float y1
+200
+#   initial guess
+float dy0guess1
+0
+#   
+float tolerance
+0.01
+#   
+float step
+0.5
+# EndOfInput
+EOF

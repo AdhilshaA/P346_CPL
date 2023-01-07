@@ -1,0 +1,27 @@
+#------------inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.-------------------------#
+#----PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.--------#
+#---types can be: int, float, str, complex, int_list, float_list, str_list, int_mat, float_mat, str_mat, xydata (2 var), xysigdata (3 var)-----#
+
+#   initial x value
+float xi
+0
+#   final x value
+float xf
+2
+#   initial t value
+float ti
+0
+#   final t value
+float tf
+4
+#   number of divisions on x
+int nx
+20
+#   number of divisions on t
+int nt
+5000
+#   time steps which you want on the graph
+int_list ts
+0 2 5 10 20 50 200 700 2000
+# EndOfInput
+EOF

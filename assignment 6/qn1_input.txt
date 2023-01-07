@@ -1,0 +1,27 @@
+#------------inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.-------------------------#
+#----PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.--------#
+#---types can be: int, float, str, complex, int_list, float_list, str_list, int_mat, float_mat, str_mat, xydata (2 var), xysigdata (3 var)-----#
+
+#   gamma value for the coupled ODE
+float gamma
+0.2
+#   omega value for the coupled ODE
+float omega
+1.2
+#   initial time value
+float t0
+0
+#   initial y value at inital time
+float y0
+2
+#   initial dy value at inital time
+float dy0
+-1
+#   final time value
+float tf
+80
+#   step size for RK4
+float h
+0.1
+# EndOfInput
+EOF
