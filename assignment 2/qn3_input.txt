@@ -1,0 +1,23 @@
+# inputs in (#description \n type name \n values) format. Check the Readme file and library in repository for details.
+#PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.
+
+#   seed value for Random walk1
+int seed1
+21
+#   seed value for Random walk2
+int seed2
+16
+#   seed value for Random walk3
+int seed3
+29
+#   no. of steps in Random walk1
+int steps1
+300
+#   no. of steps in Random walk1
+int steps2
+600
+#   no. of steps in Random walk1
+int steps3
+900
+#   EndOfInput
+EOF

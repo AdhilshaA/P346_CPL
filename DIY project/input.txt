@@ -1,0 +1,48 @@
+#------------inputs in (#description \n type name \n values) format.  Check the Readme file in repository for details.-------------------------#
+#----PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.--------#
+#---types can be: int, float, str, complex, int_list, float_list, str_list, int_mat, float_mat, str_mat, xydata (2 var), xysigdata (3 var)-----#
+
+# g : acceleration due to gravity
+float g
+9.8
+# m1 : mass of first bob from top
+float m1
+2
+# m2 : mass of second bob from top
+float m2
+2
+# L1 : Length of massless rigid rod connecting from the fixed point to first bob from top
+float L1
+1
+# L2 : Length of massless rigid rod connecting from the first bob to second bob
+float L2
+1
+# ti : initial time
+float ti
+0
+# t1i : initial theta1 at initial time
+float t1i
+3.1315926535897933
+# t2i : initial theta2 at initial time
+float t2i
+0
+# w1i : initial omega1 at initial time
+float w1i
+0
+# w2i : initial omega2 at initial time
+float w2i
+0
+# tf : time till the solution is needed
+float tf
+10
+# hi  : initial step size for the Adaptive step-size RK4
+float hi
+0.001
+# h : fixed step-size for simple RK4
+float h
+0.025
+# tolerance : tolerance level for adaptive step-size RK4
+float tolerance
+0.000001
+# EndOfInput
+EOF

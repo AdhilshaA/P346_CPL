@@ -1,0 +1,8 @@
+# inputs in (#description \n type name \n values format) Check the Readme file in repository for details
+#PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.
+
+# no. of terms
+int n
+15
+#
+EOF

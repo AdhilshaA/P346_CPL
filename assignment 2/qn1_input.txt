@@ -1,0 +1,11 @@
+# inputs in (#description \n type name \n values) format. Check the Readme file and library in repository for details.
+#PLEASE DONT CHANGE FORMATS.DONT DELETE THIS LINE OR THE NEXT. KEEP SPACINGS CONSTANT as the parse function is written accordingly.
+
+#   seed value for LCG random generator
+float seed
+5
+#   no. of random numbers needed
+int length
+500
+#   EndOfInput
+EOF
